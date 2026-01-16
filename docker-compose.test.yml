@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  # MediaMTX
+  mediamtx:
+    image: bluenviron/mediamtx:latest
+    container_name: gtvision-mediamtx-test
+    volumes:
+      - ./mediamtx.yml:/mediamtx.yml
+    ports:
+      - "8554:8554"   # RTSP
+      - "1935:1935"   # RTMP
+      - "8888:8888"   # HLS
+      - "8889:8889"   # WebRTC
+      - "9997:9997"   # API
+      - "9998:9998"   # Metrics
+    networks:
+      - test-network
+
+  # Streaming Service (FastAPI)
+  streaming:
+    build:
+      context: .
+      dockerfile: docker/streaming/Dockerfile
+    container_name: gtvision-streaming-test
+    environment:
+      - MEDIAMTX_URL=http://mediamtx:9997
+      - PYTHONUNBUFFERED=1
+    depends_on:
+      - mediamtx
+    ports:
+      - "8001:8001"
+    networks:
+      - test-network
+
+networks:
+  test-network:
+    driver: bridge

@@ -1,0 +1,30 @@
+groups:
+  - name: business_alerts
+    interval: 1m
+    rules:
+      - alert: NoActiveStreams
+        expr: gtvision_active_streams == 0
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "No active streams"
+          description: "There are no active streams for 10 minutes"
+
+      - alert: HighCameraOfflineRate
+        expr: (gtvision_cameras_offline / gtvision_cameras_total) > 0.2
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High camera offline rate"
+          description: "More than 20% of cameras are offline"
+
+      - alert: RecordingFailures
+        expr: rate(gtvision_recording_errors_total[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "High recording failure rate"
+          description: "Recording failures detected"
