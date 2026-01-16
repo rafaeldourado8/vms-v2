@@ -30,6 +30,7 @@ class PermissionModel(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
+        app_label = "admin_persistence"
         db_table = "admin_permissions"
         ordering = ["name"]
 
@@ -48,6 +49,7 @@ class RoleModel(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
+        app_label = "admin_persistence"
         db_table = "admin_roles"
         ordering = ["name"]
 
@@ -73,6 +75,7 @@ class UserModel(AbstractBaseUser):
     REQUIRED_FIELDS = ["name"]
 
     class Meta:
+        app_label = "admin_persistence"
         db_table = "admin_users"
         ordering = ["-created_at"]
 

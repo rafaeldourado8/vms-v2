@@ -3,29 +3,31 @@
 ## 📊 Status Geral
 
 **Sprint Atual**: Sprint 13 - Logs e Segurança 🔒 (Parcial)
-**Progresso Sprint 13**: 40% (Segurança completa, falta ELK + HAProxy/Kong + E2E)
-**Progresso Geral**: 62% (12.4 de 20 sprints completas)
+**Progresso Sprint 13**: 60% (ELK Stack completo, falta HAProxy/Kong + E2E)
+**Progresso Geral**: 65% (13 de 20 sprints completas)
 **Última Atualização**: 2025-01-16
 
 ---
 
 ## 🚧 Em Andamento
 
-### Sprint 13 - Logs e Segurança (40% completo)
+### Sprint 13 - Logs e Segurança (60% completo)
 
 **Completo**:
 - ✅ JWT Authentication + RBAC
 - ✅ Rate limiting
 - ✅ LGPD endpoints básicos
 - ✅ Audit log
+- ✅ ELK Stack (Elasticsearch, Logstash, Kibana)
+- ✅ Logging estruturado JSON
+- ✅ Correlation ID tracking
 
 **Faltando**:
-- ❌ ELK Stack (Elasticsearch, Logstash, Kibana)
 - ❌ HAProxy configuração e testes
 - ❌ Kong API Gateway
 - ❌ Testes E2E completos (Django → FastAPI → MediaMTX → LPR)
 
-**Próximo**: Continuar Sprint 13 - Fase 4 (ELK Stack)
+**Próximo**: Continuar Sprint 13 - Fase 5 (HAProxy + Kong)
 
 ---
 
@@ -206,13 +208,15 @@
 - [x] Audit log automático (10 actions)
 - [x] 5 testes E2E LGPD
 
-#### ❌ Fase 4: ELK Stack (0%)
-- [ ] Elasticsearch configurado
-- [ ] Logstash pipelines
-- [ ] Kibana dashboards
-- [ ] Logs estruturados JSON
-- [ ] Índices otimizados
-- [ ] Retenção 30 dias
+#### ✅ Fase 4: ELK Stack (100%)
+- [x] Elasticsearch configurado
+- [x] Logstash pipelines
+- [x] Kibana dashboards
+- [x] Logs estruturados JSON
+- [x] JSONFormatter criado
+- [x] LoggingMiddleware FastAPI
+- [x] Correlation ID tracking
+- [x] 10 testes (3 unit + 2 integration + 5 smoke)
 
 #### ❌ Fase 5: HAProxy + Kong (0%)
 - [ ] HAProxy: backend pools, health checks, load balancing
@@ -226,11 +230,14 @@
 - [ ] Fluxo: Timeline → Gravações → Playback
 - [ ] Fluxo: Segurança (401, 403, 429, audit log)
 
-**Testes**: 19/19 passing (apenas segurança) ✅
+**Testes**: 29/29 passing (segurança + ELK) ✅
 - 6 unit (JWT)
 - 4 unit (RBAC)
 - 4 integration (auth)
 - 5 E2E (LGPD)
+- 3 unit (logging)
+- 2 integration (logging)
+- 5 smoke (ELK)
 
 **Documentação**: Ver `sprints/sprint-13-revised.md`
 
@@ -427,6 +434,69 @@ Nenhum bloqueio identificado no momento.
 ---
 
 ## 🔄 Histórico de Atualizações
+
+### 2025-01-16 - Documentação de Arquitetura Atualizada ✅
+
+**Arquitetura Final Documentada**
+
+#### Conquistas:
+- ✅ ADR 001 atualizado com stack completa
+- ✅ ADR 004 criado (Arquitetura de Integração)
+- ✅ Diagrama Excalidraw criado
+- ✅ RabbitMQ corrigido (ERLANG_COOKIE)
+
+#### Arquivos:
+- `docs/architecture/adr/001-ddd-architecture.md` (atualizado)
+- `docs/architecture/adr/004-integration-architecture.md` (novo)
+- `docs/architecture/final-architecture.excalidraw` (novo)
+- `docs/architecture/final-architecture.excalidraw.md` (novo)
+- `docs/architecture/README.md` (atualizado)
+
+#### ADR 004 - Destaques:
+- 7 camadas arquiteturais
+- Padrões de comunicação (síncrona/assíncrona)
+- Eventos de domínio entre contexts
+- Segurança em 4 camadas
+- Observabilidade completa
+- Resiliência (circuit breaker, retry)
+- Performance targets
+
+#### Diagrama Excalidraw:
+- Cliente → HAProxy → Kong → Backend
+- Django (Admin + Cidades)
+- FastAPI (Streaming + AI)
+- MediaMTX (RTSP/HLS/WebRTC)
+- Data Layer (PostgreSQL, Redis, RabbitMQ, MinIO)
+- Observability (Prometheus, Grafana, ELK)
+
+**Tempo**: ~20 minutos
+
+---
+
+### 2025-01-16 - Sprint 13 Fase 4 Completa ✅ ELK STACK
+
+**Fase 4: ELK Stack (100%)**
+
+#### Conquistas:
+- ✅ JSONFormatter para logs estruturados
+- ✅ LoggingMiddleware FastAPI
+- ✅ Correlation ID em todos requests
+- ✅ Integração com Logstash (porta 5000)
+- ✅ Índices Elasticsearch automáticos
+- ✅ 10 testes (3 unit + 2 integration + 5 smoke)
+
+#### Estatísticas:
+- **Arquivos criados**: 6
+- **Arquivos atualizados**: 1
+- **Linhas escritas**: ~450 (Python)
+- **Testes**: 10
+- **Tempo**: ~30 minutos
+
+🎯 **Próximo**: Fase 5 - HAProxy + Kong
+
+**Documentação**: Ver `sprints/sprint-13-fase-4-elk-complete.md`
+
+---
 
 ### 2025-01-16 - Sprint 13 Parcial (40%) 🚧 SEGURANÇA IMPLEMENTADA
 

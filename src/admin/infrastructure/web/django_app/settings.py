@@ -21,8 +21,8 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework_simplejwt",
     "corsheaders",
-    "admin.infrastructure.persistence",
-    "cidades.infrastructure.persistence",
+    "src.admin.infrastructure.persistence.apps.AdminPersistenceConfig",
+    "src.cidades.infrastructure.persistence.apps.CidadesPersistenceConfig",
 ]
 
 MIDDLEWARE = [
@@ -36,7 +36,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = "admin.infrastructure.web.django_app.urls"
+ROOT_URLCONF = "src.admin.infrastructure.web.django_app.urls"
 
 TEMPLATES = [
     {
@@ -65,7 +65,7 @@ DATABASES = {
     }
 }
 
-AUTH_USER_MODEL = "persistence.UserModel"
+AUTH_USER_MODEL = "admin_persistence.UserModel"
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},

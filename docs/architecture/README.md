@@ -171,6 +171,11 @@ bounded_context/
 - [ADR 001: Arquitetura DDD + Monolito Modular](adr/001-ddd-architecture.md)
 - [ADR 002: Escolha de Tecnologias](adr/002-technology-choices.md)
 - [ADR 003: Estratégia de Testes](adr/003-testing-strategy.md)
+- [ADR 004: Arquitetura de Integração Final](adr/004-integration-architecture.md)
+
+## 📐 Diagramas
+
+- [Arquitetura Final - Excalidraw](final-architecture.excalidraw.md)
 
 ## 🚀 Evolução Futura
 

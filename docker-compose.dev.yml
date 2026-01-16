@@ -42,6 +42,7 @@ services:
       RABBITMQ_DEFAULT_USER: gtvision
       RABBITMQ_DEFAULT_PASS: gtvision_password
       RABBITMQ_DEFAULT_VHOST: /
+      RABBITMQ_ERLANG_COOKIE: GTVISIONRABBITMQCOOKIE
     ports:
       - "5672:5672"
       - "15672:15672"

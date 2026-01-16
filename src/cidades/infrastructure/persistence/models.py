@@ -22,6 +22,7 @@ class PlanoModel(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
+        app_label = "cidades_persistence"
         db_table = "cidades_planos"
         ordering = ["tipo"]
 
@@ -41,6 +42,7 @@ class CidadeModel(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
+        app_label = "cidades_persistence"
         db_table = "cidades_cidades"
         ordering = ["nome"]
 
@@ -64,6 +66,7 @@ class UsuarioCidadeModel(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
+        app_label = "cidades_persistence"
         db_table = "cidades_usuarios_cidade"
         unique_together = ["cidade", "user_id"]
         ordering = ["tipo", "created_at"]
@@ -91,6 +94,7 @@ class CameraModel(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
+        app_label = "cidades_persistence"
         db_table = "cidades_cameras"
         ordering = ["-created_at"]
         indexes = [

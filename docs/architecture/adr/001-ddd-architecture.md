@@ -1,7 +1,7 @@
 # ADR 001: Arquitetura DDD + Monolito Modular
 
 ## Status
-Aceito
+Aceito | Atualizado: Sprint 11 (Jan 2025)
 
 ## Contexto
 Precisamos definir a arquitetura do GT-Vision VMS que suporte:
@@ -15,10 +15,21 @@ Precisamos definir a arquitetura do GT-Vision VMS que suporte:
 Adotamos **Domain-Driven Design (DDD)** com estilo **Monolito Modular**.
 
 ### Bounded Contexts:
-1. **Admin** - Autenticação, governança, usuários admin
-2. **Cidades** - Prefeituras, câmeras, planos
-3. **Streaming** - Ingestão RTSP, HLS/WebRTC, gravação
-4. **AI** - Eventos LPR, busca, análise
+1. **Admin** (Django) - Autenticação, governança, usuários admin
+2. **Cidades** (Django) - Prefeituras, câmeras, planos
+3. **Streaming** (FastAPI) - Ingestão RTSP, HLS/WebRTC, gravação
+4. **AI** (FastAPI) - Eventos LPR, busca, análise
+
+### Stack Tecnológica:
+- **Backend Admin/Cidades**: Django 5.0 + DRF (porta 8000)
+- **Backend Streaming/AI**: FastAPI (porta 8001)
+- **Database**: PostgreSQL 15 (porta 5432)
+- **Cache**: Redis 7 (porta 6379)
+- **Message Broker**: RabbitMQ 3 (porta 5672)
+- **Storage**: MinIO S3-compatible (porta 9000)
+- **Streaming Server**: MediaMTX (RTSP 8554, HLS 8888)
+- **Observability**: Prometheus + Grafana + ELK
+- **Proxy**: HAProxy + Kong Gateway
 
 ### Estrutura por Context:
 ```
@@ -34,7 +45,15 @@ bounded_context/
 - **Complexidade ciclomática < 10**
 - **Cobertura de testes > 90%**
 - Domain layer independente de frameworks
-- Comunicação entre contexts via eventos
+- Comunicação entre contexts via eventos (RabbitMQ)
+- Shared Kernel para código compartilhado
+- Anti-Corruption Layer entre contexts
+
+### Comunicação:
+- **Síncrona**: REST API via Kong Gateway
+- **Assíncrona**: RabbitMQ para eventos de domínio
+- **Cache**: Redis para dados frequentes
+- **Storage**: MinIO para vídeos e imagens
 
 ## Consequências
 
