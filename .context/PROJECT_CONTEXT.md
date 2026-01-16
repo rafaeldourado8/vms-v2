@@ -212,27 +212,31 @@ GT-Vision-VMS/
 
 ### Timeline: 20 sprints (~7 meses)
 
-1. **Sprint 0** (5 dias): Fundação e Arquitetura ⏳ ATUAL
-2. **Sprint 1** (7 dias): Admin - Autenticação
-3. **Sprint 2** (7 dias): Cidades - Gestão de Prefeituras
-4. **Sprint 3** (7 dias): Cidades - Gestão de Câmeras
-5. **Sprint 4** (10 dias): Streaming - Ingestão RTSP
-6. **Sprint 5** (10 dias): Streaming - HLS/WebRTC
-7. **Sprint 6** (10 dias): Streaming - Gravação Cíclica
-8. **Sprint 7** (10 dias): Streaming - Timeline e Playback
-9. **Sprint 8** (7 dias): Streaming - Clipping
-10. **Sprint 9** (7 dias): Streaming - Mosaico
-11. **Sprint 10** (7 dias): AI - Recepção de Eventos LPR
-12. **Sprint 11** (5 dias): AI - Busca e Exibição
-13. **Sprint 12** (5 dias): Observabilidade - Prometheus + Grafana
-14. **Sprint 13** (5 dias): Logs e Segurança
-15. **Sprint 14** (5 dias): LGPD - Compliance
-16. **Sprint 15** (7 dias): Integração Frontend
-17. **Sprint 16** (7 dias): Testes de Carga e Performance
-18. **Sprint 17** (7 dias): Terraform - IaC AWS
-19. **Sprint 18** (5 dias): CI/CD Pipeline
-20. **Sprint 19** (5 dias): Documentação Final
-21. **Sprint 20** (7 dias): Testes Finais e Homologação
+**Sprints Completas** ✅:
+1. **Sprint 0** (5 dias): Fundação e Arquitetura ✅
+2. **Sprint 1** (7 dias): Admin - Autenticação ✅
+3. **Sprint 2** (7 dias): Cidades - Gestão de Prefeituras ✅
+4. **Sprint 3** (7 dias): Cidades - Gestão de Câmeras ✅
+5. **Sprint 4** (10 dias): Streaming - Ingestão RTSP ✅
+6. **Sprint 5** (10 dias): Streaming - HLS/WebRTC ✅
+7. **Sprint 6** (10 dias): Streaming - Gravação Cíclica ✅
+8. **Sprint 8** (7 dias): Streaming - Clipping ✅
+9. **Sprint 10** (7 dias): AI - Domain Layer LPR ✅ (sem webhook)
+10. **Sprint 11** (5 dias): Integração Real (PostgreSQL, RabbitMQ, MinIO) ✅
+11. **Sprint 12** (5 dias): Observabilidade - Prometheus + Grafana ✅
+12. **Sprint 13** (5 dias): Logs e Segurança (JWT, RBAC, ELK, HAProxy, Kong) ✅
+
+**Sprints Pendentes** ⏳:
+13. **Sprint 7** (10 dias): Streaming - Timeline e Playback ⏳ PRÓXIMA
+14. **Sprint 9** (7 dias): Streaming - Mosaico
+15. **Sprint 10b** (5 dias): AI - Webhook LPR (receber eventos das câmeras)
+16. **Sprint 14** (5 dias): LGPD - Compliance Completo
+17. **Sprint 15** (7 dias): Integração Frontend
+18. **Sprint 16** (7 dias): Testes de Carga e Performance
+19. **Sprint 17** (7 dias): Terraform - IaC AWS
+20. **Sprint 18** (5 dias): CI/CD Pipeline
+21. **Sprint 19** (5 dias): Documentação Final
+22. **Sprint 20** (7 dias): Testes Finais e Homologação
 
 **Detalhes completos**: Ver `sprints/README.md`
 
@@ -382,9 +386,10 @@ Para dúvidas sobre o projeto, sempre consulte:
 
 ---
 
-**Última atualização**: 2025-01-XX
-**Versão**: 1.0
-**Status**: Sprint 0 - Fundação e Arquitetura (em preparação)
+**Última atualização**: 2025-01-16
+**Versão**: 2.0
+**Status**: Sprint 13 Completa - Próxima: Sprint 7 (Timeline e Playback)
+**Progresso**: 68% (13.5 de 20 sprints)
 
 ---
 
@@ -394,8 +399,9 @@ Para dúvidas sobre o projeto, sempre consulte:
 Você está trabalhando no GT-Vision VMS, um sistema VMS enterprise para prefeituras.
 
 ARQUITETURA: DDD + SOLID + Monolito Modular
-SPRINT ATUAL: Sprint 0 - Fundação e Arquitetura
-STACK: Django + FastAPI + PostgreSQL + Redis + RabbitMQ + MediaMTX
+SPRINT ATUAL: Sprint 13 Completa - Próxima: Sprint 7 (Timeline)
+STACK: Django + FastAPI + PostgreSQL + Redis + RabbitMQ + MediaMTX + HAProxy + Kong
+PROGRESSO: 68% (13.5/20 sprints)
 
 REGRAS OBRIGATÓRIAS:
 - Complexidade ciclomática < 10
@@ -406,5 +412,5 @@ REGRAS OBRIGATÓRIAS:
 - Código mínimo e funcional
 
 LEIA: .context/PROJECT_CONTEXT.md para contexto completo
-LEIA: sprints/sprint-0.md para tarefas atuais
+LEIA: .context/CURRENT_STATE.md para estado atual
 ```

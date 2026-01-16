@@ -1,0 +1,25 @@
+_format_version: "3.0"
+
+services:
+  - name: streaming-service
+    url: http://streaming:8001
+    routes:
+      - name: streaming-route
+        paths:
+          - /api/streaming
+        strip_path: false
+    plugins:
+      - name: rate-limiting
+        config:
+          minute: 500
+          policy: local
+      - name: cors
+        config:
+          origins:
+            - "*"
+          credentials: true
+
+plugins:
+  - name: prometheus
+    config:
+      per_consumer: false

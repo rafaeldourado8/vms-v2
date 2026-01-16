@@ -1,62 +1,41 @@
 @echo off
-REM GT-Vision VMS - Start Development Environment
-REM Infraestrutura no Docker + Backend/Streaming localmente
-
 echo ========================================
-echo GT-Vision VMS - Development Environment
+echo GT-Vision VMS - Ambiente Dev
+echo Apenas Infraestrutura
 echo ========================================
 echo.
 
-echo [1/5] Parando containers antigos...
-docker-compose -f docker-compose.dev.yml down
-
-echo.
-echo [2/5] Iniciando infraestrutura (Docker)...
+echo [1/2] Iniciando infraestrutura...
 docker-compose -f docker-compose.dev.yml up -d
-
 echo.
-echo [3/5] Aguardando serviços iniciarem (30s)...
+
+echo Aguardando servicos (30s)...
 timeout /t 30 /nobreak
+echo.
 
+echo [2/2] Status dos servicos...
+docker-compose -f docker-compose.dev.yml ps
 echo.
-echo [4/5] Inicializando buckets MinIO...
-poetry run python scripts\init_minio.py
 
-echo.
-echo [5/5] Aplicando migrations...
-poetry run python manage.py migrate
-
-echo.
 echo ========================================
-echo Infraestrutura iniciada com sucesso!
+echo Infraestrutura Pronta!
 echo ========================================
 echo.
-echo INFRAESTRUTURA (Docker):
-echo   - PostgreSQL:        localhost:5432
-echo   - Redis:             localhost:6379
-echo   - RabbitMQ:          http://localhost:15672 (gtvision/gtvision_password)
-echo   - MinIO:             http://localhost:9001 (minioadmin/minioadmin)
-echo   - MediaMTX RTSP:     rtsp://localhost:8554
-echo   - MediaMTX HLS:      http://localhost:8888
+echo Servicos disponiveis:
+echo   PostgreSQL:    localhost:5432
+echo   Redis:         localhost:6379
+echo   RabbitMQ:      localhost:5672, 15672
+echo   MinIO:         localhost:9000, 9001
+echo   MediaMTX:      localhost:8554, 8888, 8889
+echo   Prometheus:    localhost:9090
+echo   Grafana:       localhost:3000
+echo   Elasticsearch: localhost:9200
+echo   Kibana:        localhost:5601
 echo.
-echo OBSERVABILIDADE (Docker):
-echo   - Prometheus:        http://localhost:9090
-echo   - Grafana:           http://localhost:3000 (admin/admin)
-echo   - Elasticsearch:     http://localhost:9200
-echo   - Logstash:          localhost:5000
-echo   - Kibana:            http://localhost:5601
+echo Proximos passos:
+echo   1. Rodar Django:  poetry run python manage.py runserver
+echo   2. Rodar FastAPI: cd src/streaming ^&^& poetry run uvicorn infrastructure.web.main:app --reload --port 8001
 echo.
-echo ========================================
-echo PROXIMO PASSO: Iniciar aplicacoes localmente
-echo ========================================
+echo Para parar:
+echo   docker-compose -f docker-compose.dev.yml down
 echo.
-echo Terminal 1 - Django (Admin + Cidades):
-echo   poetry run python manage.py runserver
-echo.
-echo Terminal 2 - FastAPI (Streaming + AI):
-echo   cd src/streaming
-echo   poetry run uvicorn infrastructure.web.main:app --reload --port 8001
-echo.
-echo ========================================
-
-pause

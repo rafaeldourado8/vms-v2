@@ -1,38 +1,261 @@
-version: '3.8'
+# Docker Compose COMPLETO - Sprint 13 (Testes E2E)
+# Inclui HAProxy + Kong + Stack completa (SEM frontend e Django)
 
 services:
+  # HAProxy (Load Balancer)
+  haproxy:
+    image: haproxy:latest
+    container_name: gtvision-haproxy-dev
+    ports:
+      - "80:80"
+      - "8404:8404"
+    volumes:
+      - ./haproxy/haproxy.simple.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+    depends_on:
+      - kong
+      - streaming
+    networks:
+      - backend
+
+  # Kong (API Gateway)
+  kong:
+    image: kong:3.4
+    container_name: gtvision-kong-dev
+    environment:
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: /kong.yml
+      KONG_PROXY_ACCESS_LOG: /dev/stdout
+      KONG_ADMIN_ACCESS_LOG: /dev/stdout
+      KONG_PROXY_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_LISTEN: 0.0.0.0:8001
+    ports:
+      - "8000:8000"
+      - "8443:8443"
+    volumes:
+      - ./kong/kong.simple.yml:/kong.yml:ro
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD", "kong", "health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: gtvision-postgres-dev
+    environment:
+      POSTGRES_DB: gtvision
+      POSTGRES_USER: gtvision
+      POSTGRES_PASSWORD: gtvision_password
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U gtvision"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Cache
+  redis:
+    image: redis:7-alpine
+    container_name: gtvision-redis-dev
+    ports:
+      - "6379:6379"
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Message Broker
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: gtvision-rabbitmq-dev
+    environment:
+      RABBITMQ_DEFAULT_USER: gtvision
+      RABBITMQ_DEFAULT_PASS: gtvision_password
+      RABBITMQ_DEFAULT_VHOST: /
+      RABBITMQ_ERLANG_COOKIE: GTVISIONRABBITMQCOOKIE
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # MinIO
+  minio:
+    image: minio/minio:latest
+    container_name: gtvision-minio-dev
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_dev_data:/data
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   # MediaMTX
   mediamtx:
     image: bluenviron/mediamtx:latest
-    container_name: gtvision-mediamtx-test
+    container_name: gtvision-mediamtx-dev
     volumes:
       - ./mediamtx.yml:/mediamtx.yml
     ports:
-      - "8554:8554"   # RTSP
-      - "1935:1935"   # RTMP
-      - "8888:8888"   # HLS
-      - "8889:8889"   # WebRTC
-      - "9997:9997"   # API
-      - "9998:9998"   # Metrics
+      - "8554:8554"
+      - "1935:1935"
+      - "8888:8888"
+      - "8889:8889"
+      - "9997:9997"
     networks:
-      - test-network
+      - backend
 
-  # Streaming Service (FastAPI)
+  # Streaming API
   streaming:
     build:
       context: .
       dockerfile: docker/streaming/Dockerfile
-    container_name: gtvision-streaming-test
-    environment:
-      - MEDIAMTX_URL=http://mediamtx:9997
-      - PYTHONUNBUFFERED=1
-    depends_on:
-      - mediamtx
+    container_name: gtvision-streaming-dev
     ports:
       - "8001:8001"
+    environment:
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=gtvision
+      - POSTGRES_USER=gtvision
+      - POSTGRES_PASSWORD=gtvision_password
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USER=gtvision
+      - RABBITMQ_PASSWORD=gtvision_password
+      - MINIO_ENDPOINT=minio:9000
+      - MINIO_ACCESS_KEY=minioadmin
+      - MINIO_SECRET_KEY=minioadmin
+      - LOGSTASH_HOST=logstash
+      - LOGSTASH_PORT=5000
+    depends_on:
+      - postgres
+      - redis
+      - rabbitmq
+      - minio
+      - mediamtx
+      - logstash
     networks:
-      - test-network
+      - backend
+    volumes:
+      - ./src:/app/src
+
+  # Prometheus
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: gtvision-prometheus-dev
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./monitoring/alerts:/etc/prometheus/alerts
+      - prometheus_dev_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    networks:
+      - backend
+    depends_on:
+      - streaming
+
+  # Grafana
+  grafana:
+    image: grafana/grafana:latest
+    container_name: gtvision-grafana-dev
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources
+      - grafana_dev_data:/var/lib/grafana
+    networks:
+      - backend
+    depends_on:
+      - prometheus
+
+  # Elasticsearch
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: gtvision-elasticsearch-dev
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms256m -Xmx256m"
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch_dev_data:/usr/share/elasticsearch/data
+    networks:
+      - backend
+
+  # Logstash
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.11.0
+    container_name: gtvision-logstash-dev
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./monitoring/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    environment:
+      - "LS_JAVA_OPTS=-Xms128m -Xmx128m"
+    networks:
+      - backend
+    depends_on:
+      - elasticsearch
+
+  # Kibana
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.11.0
+    container_name: gtvision-kibana-dev
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    networks:
+      - backend
+    depends_on:
+      - elasticsearch
 
 networks:
-  test-network:
+  backend:
     driver: bridge
+
+volumes:
+  postgres_dev_data:
+  minio_dev_data:
+  prometheus_dev_data:
+  grafana_dev_data:
+  elasticsearch_dev_data:
