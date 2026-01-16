@@ -220,15 +220,15 @@ GT-Vision-VMS/
 5. **Sprint 4** (10 dias): Streaming - Ingestão RTSP ✅
 6. **Sprint 5** (10 dias): Streaming - HLS/WebRTC ✅
 7. **Sprint 6** (10 dias): Streaming - Gravação Cíclica ✅
-8. **Sprint 8** (7 dias): Streaming - Clipping ✅
-9. **Sprint 10** (7 dias): AI - Domain Layer LPR ✅ (sem webhook)
-10. **Sprint 11** (5 dias): Integração Real (PostgreSQL, RabbitMQ, MinIO) ✅
-11. **Sprint 12** (5 dias): Observabilidade - Prometheus + Grafana ✅
-12. **Sprint 13** (5 dias): Logs e Segurança (JWT, RBAC, ELK, HAProxy, Kong) ✅
+8. **Sprint 7** (10 dias): Streaming - Timeline e Playback ✅
+9. **Sprint 8** (7 dias): Streaming - Clipping ✅
+10. **Sprint 10** (7 dias): AI - Domain Layer LPR ✅ (sem webhook)
+11. **Sprint 11** (5 dias): Integração Real (PostgreSQL, RabbitMQ, MinIO) ✅
+12. **Sprint 12** (5 dias): Observabilidade - Prometheus + Grafana ✅
+13. **Sprint 13** (5 dias): Logs e Segurança (JWT, RBAC, ELK, HAProxy, Kong) ✅
 
 **Sprints Pendentes** ⏳:
-13. **Sprint 7** (10 dias): Streaming - Timeline e Playback ⏳ PRÓXIMA
-14. **Sprint 9** (7 dias): Streaming - Mosaico
+14. **Sprint 9** (7 dias): Streaming - Mosaico ⏳ PRÓXIMA
 15. **Sprint 10b** (5 dias): AI - Webhook LPR (receber eventos das câmeras)
 16. **Sprint 14** (5 dias): LGPD - Compliance Completo
 17. **Sprint 15** (7 dias): Integração Frontend
@@ -387,9 +387,9 @@ Para dúvidas sobre o projeto, sempre consulte:
 ---
 
 **Última atualização**: 2025-01-16
-**Versão**: 2.0
-**Status**: Sprint 13 Completa - Próxima: Sprint 7 (Timeline e Playback)
-**Progresso**: 68% (13.5 de 20 sprints)
+**Versão**: 2.1
+**Status**: Sprint 7 Completa - Próxima: Sprint 9 (Mosaico)
+**Progresso**: 70% (14 de 20 sprints)
 
 ---
 
@@ -399,9 +399,9 @@ Para dúvidas sobre o projeto, sempre consulte:
 Você está trabalhando no GT-Vision VMS, um sistema VMS enterprise para prefeituras.
 
 ARQUITETURA: DDD + SOLID + Monolito Modular
-SPRINT ATUAL: Sprint 13 Completa - Próxima: Sprint 7 (Timeline)
+SPRINT ATUAL: Sprint 7 Completa - Próxima: Sprint 9 (Mosaico)
 STACK: Django + FastAPI + PostgreSQL + Redis + RabbitMQ + MediaMTX + HAProxy + Kong
-PROGRESSO: 68% (13.5/20 sprints)
+PROGRESSO: 70% (14/20 sprints)
 
 REGRAS OBRIGATÓRIAS:
 - Complexidade ciclomática < 10

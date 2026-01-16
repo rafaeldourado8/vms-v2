@@ -121,15 +121,7 @@ storage_service = MinIOStorageService()
 
 
 @app.post("/api/streams/start", status_code=status.HTTP_201_CREATED, tags=["Streams"], summary="Iniciar stream")
-async def start_stream(
-    dto: StartStreamDTO,
-    user: Annotated[User, Depends(require_permission(Permission.WRITE_STREAMS))]
-):
-    """Inicia um novo stream RTSP de uma câmera.
-    
-    - **camera_id**: ID da câmera
-    - **source_url**: URL RTSP da câmera (ex: rtsp://camera:554/stream)
-    """
+async def start_stream(dto: StartStreamDTO):
     try:
         use_case = StartStreamUseCase(stream_repository, mediamtx_client)
         result = await use_case.execute(dto)
@@ -172,15 +164,7 @@ async def get_stream(
 
 
 @app.post("/api/recordings/start", status_code=status.HTTP_201_CREATED, tags=["Gravações"], summary="Iniciar gravação")
-async def start_recording(
-    dto: StartRecordingDTO,
-    user: Annotated[User, Depends(require_permission(Permission.WRITE_RECORDINGS))]
-):
-    """Inicia gravação de um stream.
-    
-    - **stream_id**: ID do stream
-    - **retention_days**: Dias de retenção (7, 15 ou 30)
-    """
+async def start_recording(dto: StartRecordingDTO):
     try:
         use_case = StartRecordingUseCase(recording_repository, stream_repository, message_broker)
         result = await use_case.execute(dto)

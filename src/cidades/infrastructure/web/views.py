@@ -156,3 +156,44 @@ async def delete_camera(request, cidade_id, camera_id):
 
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(["GET", "POST"])
+@permission_classes([])
+def list_all_cameras(request):
+    """List all cameras endpoint."""
+    try:
+        from src.cidades.infrastructure.persistence.models import CameraModel
+        cameras = CameraModel.objects.select_related('cidade').all()
+        
+        results = [
+            {
+                "id": str(camera.id),
+                "nome": camera.nome,
+                "localizacao": camera.localizacao,
+                "url": camera.url,
+                "status": camera.status,
+                "cidade_id": str(camera.cidade_id),
+                "cidade_nome": camera.cidade.nome,
+            }
+            for camera in cameras
+        ]
+        
+        return Response(results, status=status.HTTP_200_OK)
+    
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(["GET", "POST"])
+@permission_classes([])
+def get_clips(request):
+    """Get clips endpoint (placeholder)."""
+    return Response([], status=status.HTTP_200_OK)
+
+
+@api_view(["GET", "POST"])
+@permission_classes([])
+def get_mosaics(request):
+    """Get mosaics endpoint (placeholder)."""
+    return Response([], status=status.HTTP_200_OK)

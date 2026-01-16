@@ -1,0 +1,13 @@
+@echo off
+echo Limpando volumes e reiniciando...
+docker-compose -f docker-compose.dev.yml down -v
+docker volume prune -f
+echo.
+echo Iniciando servicos...
+docker-compose -f docker-compose.dev.yml up -d postgres redis minio mediamtx rabbitmq
+echo.
+echo Aguardando 10 segundos...
+timeout /t 10 >nul
+echo.
+echo Verificando status...
+docker-compose -f docker-compose.dev.yml ps

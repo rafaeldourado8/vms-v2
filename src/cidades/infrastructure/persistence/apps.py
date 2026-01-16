@@ -8,3 +8,7 @@ class CidadesPersistenceConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
     name = "src.cidades.infrastructure.persistence"
     label = "cidades_persistence"
+
+    def ready(self):
+        """Import admin when app is ready."""
+        import src.cidades.infrastructure.persistence.admin  # noqa

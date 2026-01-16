@@ -38,18 +38,23 @@ services:
   rabbitmq:
     image: rabbitmq:3-management-alpine
     container_name: gtvision-rabbitmq
+    user: rabbitmq
     environment:
       RABBITMQ_DEFAULT_USER: gtvision
       RABBITMQ_DEFAULT_PASS: gtvision_password
       RABBITMQ_DEFAULT_VHOST: /
+      RABBITMQ_ERLANG_COOKIE: gtvision_erlang_cookie_secret
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
     ports:
       - "5672:5672"
       - "15672:15672"
     healthcheck:
-      test: ["CMD", "rabbitmq-diagnostics", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      test: ["CMD", "rabbitmq-diagnostics", "check_port_connectivity"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
     networks:
       - gtvision-network
 
@@ -103,13 +108,12 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
       minio:
         condition: service_healthy
     ports:
       - "8000:8000"
     volumes:
+      - ./manage.py:/app/manage.py
       - ./src:/app/src
       - static_volume:/app/staticfiles
       - media_volume:/app/media
@@ -129,8 +133,6 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
       minio:
         condition: service_healthy
       mediamtx:
@@ -139,6 +141,34 @@ services:
       - "8001:8001"
     volumes:
       - ./src:/app/src
+    networks:
+      - gtvision-network
+
+  # Detection API (FastAPI)
+  detection:
+    build:
+      context: .
+      dockerfile: docker/detection/Dockerfile
+    container_name: gtvision-detection
+    ports:
+      - "8002:8002"
+    volumes:
+      - ./src/detection:/app/detection
+    networks:
+      - gtvision-network
+
+  # Frontend (React + Vite)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: gtvision-frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+      - streaming
+      - detection
     networks:
       - gtvision-network
 
@@ -168,16 +198,17 @@ services:
       - "80:80"
       - "8404:8404"
     depends_on:
+      - frontend
       - backend
       - streaming
-      - nginx
+      - detection
       - mediamtx
     networks:
       - gtvision-network
 
   # Kong Gateway
   kong:
-    image: kong:3.5-alpine
+    image: kong:3.5
     container_name: gtvision-kong
     environment:
       KONG_DATABASE: "off"
@@ -186,14 +217,16 @@ services:
       KONG_ADMIN_ACCESS_LOG: /dev/stdout
       KONG_PROXY_ERROR_LOG: /dev/stderr
       KONG_ADMIN_ERROR_LOG: /dev/stderr
-      KONG_ADMIN_LISTEN: 0.0.0.0:8001
+      KONG_ADMIN_LISTEN: 0.0.0.0:8444
     volumes:
       - ./kong/kong.yml:/kong/kong.yml:ro
     ports:
-      - "8000:8000"
       - "8443:8443"
-      - "8001:8001"
       - "8444:8444"
+    depends_on:
+      - backend
+      - streaming
+      - detection
     networks:
       - gtvision-network
 
@@ -271,6 +304,7 @@ services:
 
 volumes:
   postgres_data:
+  rabbitmq_data:
   minio_data:
   static_volume:
   media_volume:

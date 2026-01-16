@@ -42,10 +42,11 @@ services:
       RABBITMQ_DEFAULT_USER: gtvision
       RABBITMQ_DEFAULT_PASS: gtvision_password
       RABBITMQ_DEFAULT_VHOST: /
-      RABBITMQ_ERLANG_COOKIE: GTVISIONRABBITMQCOOKIE
     ports:
       - "5672:5672"
       - "15672:15672"
+    volumes:
+      - rabbitmq_dev_data:/var/lib/rabbitmq
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "ping"]
       interval: 10s
@@ -118,6 +119,17 @@ services:
       - logstash
     volumes:
       - ./src:/app/src
+
+  # Detection API
+  detection:
+    build:
+      context: .
+      dockerfile: docker/detection/Dockerfile
+    container_name: gtvision-detection-dev
+    ports:
+      - "8002:8002"
+    volumes:
+      - ./src/detection:/app/detection
 
   # Prometheus
   prometheus:
@@ -237,3 +249,4 @@ volumes:
   prometheus_dev_data:
   grafana_dev_data:
   elasticsearch_dev_data:
+  rabbitmq_dev_data:

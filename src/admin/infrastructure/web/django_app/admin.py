@@ -31,15 +31,22 @@ class RoleAdmin(admin.ModelAdmin):
 class UserAdmin(admin.ModelAdmin):
     """User admin."""
 
-    list_display = ["email", "name", "is_active", "created_at"]
-    list_filter = ["is_active", "created_at"]
-    search_fields = ["email", "name"]
+    list_display = ["email", "name", "id", "is_active", "is_staff", "is_superuser", "created_at"]
+    list_filter = ["is_active", "is_staff", "is_superuser", "created_at"]
+    search_fields = ["email", "name", "id"]
     filter_horizontal = ["roles"]
     readonly_fields = ["id", "created_at", "updated_at", "login_attempts"]
 
     fieldsets = (
-        (None, {"fields": ("email", "name", "password")}),
-        ("Status", {"fields": ("is_active", "login_attempts")}),
+        (None, {"fields": ("id", "email", "name", "password")}),
+        ("Permissions", {"fields": ("is_active", "is_staff", "is_superuser")}),
         ("Roles", {"fields": ("roles",)}),
+        ("Security", {"fields": ("login_attempts",)}),
         ("Timestamps", {"fields": ("created_at", "updated_at")}),
     )
+
+    def save_model(self, request, obj, form, change):
+        """Save model with password hashing."""
+        if "password" in form.changed_data:
+            obj.set_password(form.cleaned_data["password"])
+        super().save_model(request, obj, form, change)

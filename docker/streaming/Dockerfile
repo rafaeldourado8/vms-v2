@@ -2,8 +2,6 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Install dependencies
-COPY pyproject.toml ./
 RUN pip install --no-cache-dir \
     fastapi==0.109.0 \
     uvicorn[standard]==0.27.0 \
@@ -20,8 +18,9 @@ RUN pip install --no-cache-dir \
     passlib[bcrypt]==1.7.4 \
     slowapi==0.1.9
 
-# Copy source code
 COPY src/ ./src/
+
+ENV PYTHONPATH=/app
 
 EXPOSE 8001
 

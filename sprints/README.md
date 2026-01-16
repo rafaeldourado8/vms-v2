@@ -189,16 +189,18 @@ src/
 
 ---
 
-### **SPRINT 7: Streaming Context - Timeline e Playback** (10 dias)
+### **SPRINT 7: Streaming Context - Timeline e Playback** (10 dias) ✅ COMPLETA
 **Objetivo**: Timeline interativa, playback de gravações
 
+**Status**: ✅ COMPLETA (2025-01-16)
+
 #### Entregáveis:
-- [ ] API de busca de gravações por período
-- [ ] Geração de thumbnails (FFmpeg)
-- [ ] Endpoint de playback (HLS de arquivos gravados)
-- [ ] Timeline metadata (eventos, gaps)
-- [ ] Testes
-- [ ] Documentação
+- [x] API de busca de gravações por período
+- [x] Geração de thumbnails (FFmpeg)
+- [x] Endpoint de playback (HLS de arquivos gravados)
+- [x] Timeline metadata (eventos, gaps)
+- [x] Testes
+- [x] Documentação
 
 #### Funcionalidades:
 - Busca de gravações por câmera + período
@@ -206,6 +208,12 @@ src/
 - Playback de gravações via HLS
 - Thumbnails para preview
 - Navegação rápida (seek)
+
+#### Documentação:
+- [Sprint 7 - Documentação Completa](sprint-7.md)
+- [Sprint 7 - Checklist](sprint-7-checklist.md)
+- [Sprint 7 - Resumo Executivo](sprint-7-summary.md)
+- [Sprint 7 - Índice](sprint-7-index.md)
 
 ---
 
@@ -532,5 +540,6 @@ bounded_context/
 
 ---
 
-**Última atualização**: 2025-01-XX
-**Versão**: 1.0
+**Última atualização**: 2025-01-16
+**Versão**: 2.0
+**Progresso**: 70% (14 de 20 sprints completas)

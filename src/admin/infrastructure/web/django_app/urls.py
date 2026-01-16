@@ -8,5 +8,5 @@ urlpatterns = [
     path("api/auth/login/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("api/auth/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("api/users/", include("src.admin.infrastructure.web.django_app.api_urls")),
-    path("api/cidades/", include("src.cidades.infrastructure.web.urls")),
+    path("api/", include("src.cidades.infrastructure.web.urls")),
 ]
