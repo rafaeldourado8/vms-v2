@@ -179,7 +179,14 @@ GT-Vision-VMS/
 
 ## 📝 License
 
-Proprietary - GT-Vision Team
+Proprietary - Commercial License Required
+
+Copyright (c) 2025 Rafael Dourado Crispim. All rights reserved.
+
+This software is proprietary and requires a paid commercial license for use.
+Unauthorized use is strictly prohibited. See [LICENSE](LICENSE) for details.
+
+For licensing inquiries: rafael.dourado.crispim@gt-vision.com.br
 
 ## 📞 Suporte
 
