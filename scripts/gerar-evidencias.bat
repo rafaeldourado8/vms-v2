@@ -121,7 +121,7 @@ echo.
 REM Criar ZIP com timestamp
 echo Criando backup com timestamp...
 set ZIPFILE=evidencias\codigo_fonte_%DATA%_%HORA%.zip
-powershell Compress-Archive -Path src\*,LICENSE,AUTORIA.md,README.md -DestinationPath "%ZIPFILE%" -Force
+powershell Compress-Archive -Path "src\*","LICENSE","AUTORIA.md","README.md" -DestinationPath ""%ZIPFILE%"" -Force
 
 echo Backup criado: %ZIPFILE%
 echo.
