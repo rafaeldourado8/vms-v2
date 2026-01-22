@@ -29,8 +29,7 @@ Você está trabalhando no **GT-Vision VMS**, um sistema VMS (Video Management S
 ### Bounded Contexts (DDD)
 1. **Admin** - Governança total, autenticação, gestão de usuários admin
 2. **Cidades** - Gestão de prefeituras, câmeras (até 1000 por prefeitura), planos de armazenamento
-3. **Streaming** - Ingestão RTSP, HLS/WebRTC, gravação cíclica, timeline, clipping, mosaico
-4. **AI** - Recepção de eventos LPR (License Plate Recognition), armazenamento, busca
+3. **Streaming** - Ingestão RTSP, HLS/WebRTC, gravação cíclica, timeline, clipping, mosaico, webhooks de câmeras
 
 ### Estrutura DDD por Bounded Context
 ```
@@ -64,7 +63,7 @@ bounded_context/
 
 ### Backend
 - **Admin + Cidades**: Django 5.0 + Django REST Framework
-- **Streaming + AI**: FastAPI (máxima performance)
+- **Streaming**: FastAPI (máxima performance)
 - **Linguagem**: Python 3.11+
 
 ### Infraestrutura
@@ -133,15 +132,14 @@ bounded_context/
   - Layouts 2x2
   - Salvamento de configurações
 
-### 4. AI Context
-- **Eventos LPR** (License Plate Recognition):
-  - Webhook para receber eventos das câmeras
-  - Armazenamento de metadados (placa, timestamp, câmera, imagem)
-  - Busca avançada (placa, período, câmera, cidade)
-  - Exportação de relatórios (CSV, PDF)
-  - Estatísticas
+### 4. Webhooks de Câmeras
+- **Eventos de Câmeras**:
+  - Webhook genérico para receber eventos das câmeras
+  - Armazenamento de metadados (timestamp, câmera, tipo de evento, payload)
+  - Busca por período e câmera
+  - Integração com MediaMTX webhooks
 
-**IMPORTANTE**: Não vamos desenvolver IA de detecção. As câmeras já possuem IA embarcada e enviam eventos via webhook.
+**IMPORTANTE**: As câmeras podem enviar eventos via webhook (motion detection, analytics, etc). O sistema apenas recebe e armazena esses eventos.
 
 ---
 
@@ -192,8 +190,7 @@ GT-Vision-VMS/
 ├── src/
 │   ├── admin/           # Bounded Context: Admin
 │   ├── cidades/         # Bounded Context: Cidades
-│   ├── streaming/       # Bounded Context: Streaming
-│   └── ai/              # Bounded Context: AI
+│   └── streaming/       # Bounded Context: Streaming
 ├── haproxy/
 │   └── haproxy.cfg      # ✅ Já configurado
 ├── kong/
@@ -221,7 +218,7 @@ GT-Vision-VMS/
 6. **Sprint 5** (10 dias): Streaming - HLS/WebRTC ✅
 7. **Sprint 6** (10 dias): Streaming - Gravação Cíclica ✅
 8. **Sprint 8** (7 dias): Streaming - Clipping ✅
-9. **Sprint 10** (7 dias): AI - Domain Layer LPR ✅ (sem webhook)
+9. **Sprint 10** (7 dias): Webhooks - Recepção de eventos de câmeras ✅
 10. **Sprint 11** (5 dias): Integração Real (PostgreSQL, RabbitMQ, MinIO) ✅
 11. **Sprint 12** (5 dias): Observabilidade - Prometheus + Grafana ✅
 12. **Sprint 13** (5 dias): Logs e Segurança (JWT, RBAC, ELK, HAProxy, Kong) ✅
@@ -229,7 +226,7 @@ GT-Vision-VMS/
 **Sprints Pendentes** ⏳:
 13. **Sprint 7** (10 dias): Streaming - Timeline e Playback ⏳ PRÓXIMA
 14. **Sprint 9** (7 dias): Streaming - Mosaico
-15. **Sprint 10b** (5 dias): AI - Webhook LPR (receber eventos das câmeras)
+
 16. **Sprint 14** (5 dias): LGPD - Compliance Completo
 17. **Sprint 15** (7 dias): Integração Frontend
 18. **Sprint 16** (7 dias): Testes de Carga e Performance

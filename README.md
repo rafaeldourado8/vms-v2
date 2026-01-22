@@ -1,196 +1,193 @@
-# GT-Vision VMS
+# GT-Vision VMS v2
 
-Sistema VMS (Video Management System) enterprise para prefeituras brasileiras.
+Sistema de Gerenciamento de Vídeo (VMS) Enterprise para Prefeituras com arquitetura DDD e conformidade LGPD.
 
 ## 🏗️ Arquitetura
 
-- **Padrão**: Domain-Driven Design (DDD)
-- **Princípios**: SOLID
-- **Estilo**: Monolito Modular
-- **Bounded Contexts**: Admin, Cidades, Streaming, AI
-
-## 🛠️ Stack Tecnológica
-
-- **Backend**: Django 5.0 + FastAPI
+### Stack Tecnológico
+- **Backend Admin**: Django 5.0 + DRF (Gestão/Backoffice)
+- **Backend Streaming**: FastAPI (Alta Performance/Tempo Real)
+- **Gateway**: Nginx (Roteamento Unificado)
+- **Streaming**: MediaMTX (HLS/RTSP/RTMP)
 - **Database**: PostgreSQL 15
 - **Cache**: Redis 7
 - **Message Broker**: RabbitMQ 3
-- **Streaming**: MediaMTX
-- **Proxy**: HAProxy + Kong
-- **Observabilidade**: Prometheus + Grafana + ELK
-- **Deploy**: Docker Compose + Terraform (AWS)
+- **Storage**: MinIO (S3-compatible)
+- **Observability**: Prometheus + Grafana
 
-## 📋 Requisitos
-
-- Docker Desktop
-- Python 3.11+
-- Poetry
+### Estrutura de Módulos (DDD)
+```
+src/
+├── shared/              # Kernel compartilhado
+│   ├── domain/          # Interfaces base (Entity, AggregateRoot, Repository)
+│   ├── infra/           # Redis, RabbitMQ, PostgreSQL
+│   └── security/        # Auth, RBAC, Tenant Isolation
+│
+└── modules/             # Bounded Contexts
+    ├── admin/           # Gestão de usuários e permissões
+    ├── cidades/         # Multi-tenancy (Prefeituras)
+    ├── cameras/         # Hardware e Smart URLs
+    ├── streaming/       # Vídeo ao vivo e gravações
+    └── deteccoes/       # Eventos e alertas (LPR, IA)
+```
 
 ## 🚀 Quick Start
 
-### Sprint 11 - Integração Real (ATUAL)
+### Pré-requisitos
+- Docker 24+ e Docker Compose
+- Python 3.10+
+- Poetry 1.7+
 
+### Instalação
+
+1. **Clone e configure**
 ```bash
-# 1. Iniciar infraestrutura (PostgreSQL, Redis, RabbitMQ, MinIO, MediaMTX)
-scripts\sprint11-setup.bat
+git clone <repo>
+cd vms-v2
+cp .env.example .env
+```
 
-# 2. Instalar dependências
+2. **Inicie a infraestrutura**
+```bash
+docker-compose up -d postgres redis rabbitmq minio mediamtx
+```
+
+3. **Instale dependências**
+```bash
 poetry install
+```
 
-# 3. Aplicar migrations
+4. **Migrations**
+```bash
 poetry run python manage.py migrate
-
-# 4. Iniciar Django (Admin + Cidades)
-poetry run python manage.py runserver
-
-# 5. Iniciar FastAPI (Streaming + AI) - em outro terminal
-cd src/streaming
-poetry run uvicorn infrastructure.web.main:app --reload --port 8001
 ```
 
-### Setup Anterior (Sprints 0-10)
-
+5. **Inicie os serviços**
 ```bash
-# Clone o repositório
-git clone <repo-url>
-cd GT-Vision-VMS
+# Terminal 1 - Django Admin
+poetry run python manage.py runserver 8000
 
-# Execute o setup
-scripts\setup.bat
+# Terminal 2 - FastAPI Streaming
+poetry run uvicorn src.main:app --host 0.0.0.0 --port 8001 --reload
+
+# Terminal 3 - Nginx
+docker-compose up nginx
 ```
 
-### 2. Configuração
+## 📡 Endpoints
 
-Edite o arquivo `.env` com suas configurações.
+### Gateway Nginx (Porta 80)
+- `GET /health` - Health check
+- `/admin/` - Django Admin UI
+- `/api/admin/*` - Django REST API
+- `/api/v1/*` - FastAPI (Streaming/Câmeras)
+- `/ws/*` - WebSockets
+- `/stream/*` - HLS Streaming (MediaMTX)
 
-### 3. Iniciar Serviços
+### Exemplos
 
+**Criar câmera com Smart URL**
 ```bash
-# Todos os serviços
-docker-compose up -d
-
-# Apenas infraestrutura (dev)
-docker-compose -f docker-compose.dev.yml up -d
+curl -X POST http://localhost/api/v1/cameras \
+  -H "Content-Type: application/json" \
+  -H "X-Tenant-ID: cidade-sp" \
+  -d '{
+    "ip": "192.168.1.100",
+    "marca": "intelbras",
+    "modelo": "VIP 1220 B",
+    "usuario": "admin",
+    "senha": "admin123"
+  }'
 ```
 
-### 4. Acessar
+**Assistir stream HLS**
+```bash
+# URL gerada automaticamente
+http://localhost/stream/cam01_live/index.m3u8
+```
 
-- **Frontend**: http://localhost
-- **Backend API**: http://localhost:8000
-- **Streaming API**: http://localhost:8001
+## 🎯 Estratégia de IA (Plug & Play)
+
+### Fase Atual: Webhooks Nativos
+Câmeras Intelbras/Hikvision com LPR embarcado enviam eventos via HTTP POST:
+```
+POST /api/v1/webhooks/lpr
+{
+  "camera_id": "cam01",
+  "placa": "ABC1D23",
+  "timestamp": "2024-01-15T10:30:00Z",
+  "confianca": 0.95
+}
+```
+
+### Fase Futura: IA Própria (YOLO)
+Arquitetura preparada para container de IA:
+- MediaMTX cria paths duplicados (`cam01_live` + `cam01_ai`)
+- Container de IA consome RTSP, processa e publica no RabbitMQ
+- Worker `deteccoes` consome eventos e armazena
+
+## 🔒 Conformidade LGPD
+
+Consulte `LGPD/` para:
+- Políticas de retenção
+- Anonimização de dados
+- Logs de auditoria
+- Direitos do titular
+
+## 📊 Observabilidade
+
+- **Prometheus**: http://localhost:9090
 - **Grafana**: http://localhost:3000 (admin/admin)
-- **Kibana**: http://localhost:5601
-- **RabbitMQ**: http://localhost:15672 (gtvision/gtvision_password)
-- **HAProxy Stats**: http://localhost:8404/stats
+- **RabbitMQ Management**: http://localhost:15672 (gtvision/gtvision_password)
+- **MinIO Console**: http://localhost:9001 (minioadmin/minioadmin)
 
 ## 🧪 Testes
 
 ```bash
-# Executar todos os testes
-scripts\test.bat
+# Unit tests
+poetry run pytest src/ -m unit
 
-# Apenas unitários
-poetry run pytest -m unit
+# Integration tests
+poetry run pytest src/ -m integration
 
-# Apenas integração
-poetry run pytest -m integration
-
-# Com cobertura
+# Coverage
 poetry run pytest --cov=src --cov-report=html
 ```
 
-## 🔍 Code Quality
+## 📝 Desenvolvimento
 
+### Code Quality
 ```bash
-# Executar todas as verificações
-scripts\lint.bat
-
-# Formatação
+# Format
 poetry run black src/
 poetry run isort src/
 
-# Linting
+# Lint
 poetry run flake8 src/
-
-# Type checking
 poetry run mypy src/
 
 # Security
 poetry run bandit -r src/
 ```
 
-## 📁 Estrutura do Projeto
-
-```
-GT-Vision-VMS/
-├── src/
-│   ├── shared_kernel/      # Shared Kernel (DDD)
-│   ├── admin/              # Admin Context
-│   ├── cidades/            # Cidades Context
-│   ├── streaming/          # Streaming Context
-│   └── ai/                 # AI Context
-├── docker/                 # Dockerfiles
-├── haproxy/               # HAProxy config
-├── kong/                  # Kong config
-├── monitoring/            # Prometheus + Logstash
-├── scripts/               # Automation scripts
-├── sprints/               # Sprint planning
-├── .context/              # Project context
-└── docker-compose.yml     # Docker Compose
+### Pre-commit
+```bash
+poetry run pre-commit install
+poetry run pre-commit run --all-files
 ```
 
-## 📚 Documentação
+## 📚 Documentação Adicional
 
-### Sprint 11 (Atual)
-- [Quick Start Sprint 11](sprints/sprint-11-quickstart.md) - Começar agora
-- [Sprint 11 README](sprints/sprint-11.md) - Documentação completa
-- [Sprint 11 Checklist](sprints/sprint-11-checklist.md) - Progresso detalhado
-- [Sprint 11 Architecture](sprints/sprint-11-architecture.md) - Arquitetura de integração
-- [Integration Guide](sprints/sprint-11-integration-guide.md) - Guia técnico
-
-### Contexto do Projeto
-- [Contexto do Projeto](.context/PROJECT_CONTEXT.md)
-- [Estado Atual](.context/CURRENT_STATE.md)
-- [Planejamento de Sprints](sprints/README.md)
-- [Sprint Atual](sprints/sprint-11.md)
-
-## 🔒 Segurança
-
-- OWASP Top 10 compliance
-- LGPD compliance
-- Rate limiting
-- JWT authentication
-- Input validation
-- SQL injection prevention
-
-## 📊 Métricas de Qualidade
-
-- Cobertura de testes: >90%
-- Complexidade ciclomática: <10
-- Maintainability Index: >70
+- [Context.md](docs/prompt_engineering/context.md) - Contexto completo do projeto
+- [LGPD](LGPD/) - Conformidade e políticas
 
 ## 🤝 Contribuindo
 
-1. Leia `.context/PROJECT_CONTEXT.md`
-2. Siga a arquitetura DDD
-3. Mantenha cobertura >90%
-4. Execute `scripts\lint.bat` antes de commit
-5. Atualize `.context/CURRENT_STATE.md`
+1. Siga a arquitetura DDD estabelecida
+2. Mantenha cobertura de testes > 80%
+3. Use conventional commits
+4. Documente decisões arquiteturais
 
-## 📝 License
+## 📄 Licença
 
-Proprietary - Commercial License Required
-
-Copyright (c) 2025 Rafael Dourado Crispim. All rights reserved.
-
-This software is proprietary and requires a paid commercial license for use.
-Unauthorized use is strictly prohibited. See [LICENSE](LICENSE) for details.
-
-For licensing inquiries: rafael.dourado.crispim@gt-vision.com.br
-
-## 📞 Suporte
-
-Para dúvidas, consulte:
-1. `.context/PROJECT_CONTEXT.md`
-2. `sprints/README.md`
-3. Sprint atual em `sprints/sprint-X.md`
+Proprietário - GT-Vision Team

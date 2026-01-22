@@ -382,7 +382,7 @@ Nenhum bloqueio identificado no momento.
 ### Decisões Importantes
 - Arquitetura: DDD + SOLID + Monolito Modular
 - Backend Admin/Cidades: Django 5.0 + DRF
-- Backend Streaming/AI: FastAPI (performance)
+- Backend Streaming: FastAPI (performance)
 - Streaming: MediaMTX (RTSP/HLS/WebRTC)
 - Banco: PostgreSQL 15
 - Cache: Redis 7
@@ -412,7 +412,7 @@ Nenhum bloqueio identificado no momento.
 - Complexidade ciclomática média: <5
 
 ### Testes
-- Testes unitários: 160 (15 shared + 35 admin + 20 cidades + 48 cameras + 36 streaming + 6 ai)
+- Testes unitários: 160 (15 shared + 35 admin + 20 cidades + 48 cameras + 36 streaming + 6 webhooks)
 - Testes de integração: 4 (cameras API)
 - Testes E2E: 0
 

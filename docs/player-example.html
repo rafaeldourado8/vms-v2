@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GT-Vision Player</title>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <style>
+        .player-container {
+            position: relative;
+            width: 100%;
+            max-width: 640px;
+            background: #000;
+        }
+        
+        video {
+            width: 100%;
+            height: auto;
+        }
+        
+        .fallback-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #1a1a1a;
+            color: #fff;
+            font-family: Arial, sans-serif;
+        }
+        
+        .fallback-overlay.active {
+            display: flex;
+        }
+        
+        .fallback-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+        
+        .fallback-text {
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+        
+        .fallback-subtext {
+            font-size: 14px;
+            color: #888;
+        }
+        
+        .retry-button {
+            margin-top: 16px;
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .retry-button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="player-container">
+        <video id="video" controls></video>
+        <div id="fallback" class="fallback-overlay">
+            <div class="fallback-icon">📡</div>
+            <div class="fallback-text">Sinal Perdido</div>
+            <div class="fallback-subtext">Tentando reconectar...</div>
+            <button class="retry-button" onclick="player.retry()">Tentar Novamente</button>
+        </div>
+    </div>
+
+    <script>
+        class GTVisionPlayer {
+            constructor(videoElement, hlsUrl, options = {}) {
+                this.video = videoElement;
+                this.hlsUrl = hlsUrl;
+                this.hls = null;
+                this.fallback = document.getElementById('fallback');
+                
+                // Configurações
+                this.maxRetries = options.maxRetries || 5;
+                this.retryDelay = options.retryDelay || 3000;
+                this.retryCount = 0;
+                this.retryTimeout = null;
+                
+                this.init();
+            }
+            
+            init() {
+                if (Hls.isSupported()) {
+                    this.hls = new Hls({
+                        enableWorker: true,
+                        lowLatencyMode: true,
+                        backBufferLength: 90,
+                        maxBufferLength: 30,
+                        maxMaxBufferLength: 60,
+                        manifestLoadingTimeOut: 10000,
+                        manifestLoadingMaxRetry: 4,
+                        levelLoadingTimeOut: 10000,
+                        levelLoadingMaxRetry: 4,
+                        fragLoadingTimeOut: 20000,
+                        fragLoadingMaxRetry: 6
+                    });
+                    
+                    this.setupEventListeners();
+                    this.load();
+                    
+                } else if (this.video.canPlayType('application/vnd.apple.mpegurl')) {
+                    // Safari nativo
+                    this.video.src = this.hlsUrl;
+                    this.setupNativeListeners();
+                }
+            }
+            
+            setupEventListeners() {
+                // Sucesso
+                this.hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                    console.log('HLS: Manifest loaded');
+                    this.hideFallback();
+                    this.retryCount = 0;
+                    this.video.play().catch(e => console.log('Autoplay prevented'));
+                });
+                
+                // Erros recuperáveis
+                this.hls.on(Hls.Events.ERROR, (event, data) => {
+                    console.error('HLS Error:', data);
+                    
+                    if (data.fatal) {
+                        this.handleFatalError(data);
+                    }
+                });
+                
+                // Stall detection
+                this.video.addEventListener('waiting', () => {
+                    console.log('Video stalled, buffering...');
+                });
+                
+                this.video.addEventListener('playing', () => {
+                    console.log('Video playing');
+                    this.hideFallback();
+                });
+            }
+            
+            setupNativeListeners() {
+                this.video.addEventListener('error', (e) => {
+                    console.error('Native player error:', e);
+                    this.showFallback();
+                    this.scheduleRetry();
+                });
+            }
+            
+            handleFatalError(data) {
+                switch(data.type) {
+                    case Hls.ErrorTypes.NETWORK_ERROR:
+                        console.log('Network error, attempting recovery...');
+                        this.showFallback();
+                        this.scheduleRetry();
+                        break;
+                        
+                    case Hls.ErrorTypes.MEDIA_ERROR:
+                        console.log('Media error, attempting recovery...');
+                        this.hls.recoverMediaError();
+                        break;
+                        
+                    default:
+                        console.log('Fatal error, reloading...');
+                        this.showFallback();
+                        this.scheduleRetry();
+                        break;
+                }
+            }
+            
+            scheduleRetry() {
+                if (this.retryCount >= this.maxRetries) {
+                    console.log('Max retries reached');
+                    this.updateFallbackText('Câmera Offline', 'Verifique a conexão');
+                    return;
+                }
+                
+                this.retryCount++;
+                const delay = this.retryDelay * this.retryCount;
+                
+                this.updateFallbackText(
+                    'Sinal Perdido',
+                    `Tentando reconectar... (${this.retryCount}/${this.maxRetries})`
+                );
+                
+                clearTimeout(this.retryTimeout);
+                this.retryTimeout = setTimeout(() => {
+                    console.log(`Retry attempt ${this.retryCount}/${this.maxRetries}`);
+                    this.reload();
+                }, delay);
+            }
+            
+            load() {
+                this.hls.loadSource(this.hlsUrl);
+                this.hls.attachMedia(this.video);
+            }
+            
+            reload() {
+                if (this.hls) {
+                    this.hls.destroy();
+                    this.init();
+                } else {
+                    this.video.load();
+                }
+            }
+            
+            retry() {
+                this.retryCount = 0;
+                clearTimeout(this.retryTimeout);
+                this.reload();
+            }
+            
+            showFallback() {
+                this.fallback.classList.add('active');
+            }
+            
+            hideFallback() {
+                this.fallback.classList.remove('active');
+            }
+            
+            updateFallbackText(title, subtitle) {
+                this.fallback.querySelector('.fallback-text').textContent = title;
+                this.fallback.querySelector('.fallback-subtext').textContent = subtitle;
+            }
+            
+            destroy() {
+                clearTimeout(this.retryTimeout);
+                if (this.hls) {
+                    this.hls.destroy();
+                }
+            }
+        }
+        
+        // Uso
+        const video = document.getElementById('video');
+        const hlsUrl = 'http://localhost/stream/cam01_live/index.m3u8';
+        const player = new GTVisionPlayer(video, hlsUrl, {
+            maxRetries: 5,
+            retryDelay: 3000
+        });
+    </script>
+</body>
+</html>
