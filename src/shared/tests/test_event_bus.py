@@ -1,8 +1,8 @@
 """Tests for EventBus."""
 import pytest
 
-from src.shared_kernel.application.event_bus import EventBus
-from src.shared_kernel.domain.domain_event import DomainEvent
+from src.shared.application.event_bus import EventBus
+from src.shared.domain.domain_event import DomainEvent
 
 
 class SampleEvent(DomainEvent):

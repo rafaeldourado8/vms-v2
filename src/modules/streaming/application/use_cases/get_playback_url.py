@@ -1,10 +1,10 @@
 """Get playback URL use case."""
 from uuid import UUID
-from src.shared_kernel.application.use_case import UseCase
+from src.shared.application.use_case import UseCase
 from src.streaming.application.dtos.playback_url_response_dto import PlaybackUrlResponseDTO
 from src.streaming.domain.repositories.recording_repository import RecordingRepository
 from src.streaming.domain.services.storage_service import StorageService
-from src.shared_kernel.domain.domain_exception import DomainException
+from src.shared.domain.domain_exception import DomainException
 
 
 class GetPlaybackUrlUseCase(UseCase[UUID, PlaybackUrlResponseDTO]):

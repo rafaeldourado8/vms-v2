@@ -2,8 +2,8 @@
 from typing import List
 from uuid import UUID
 
-from src.shared_kernel.domain.domain_event import DomainEvent
-from src.shared_kernel.domain.entity import Entity
+from src.shared.domain.domain_event import DomainEvent
+from src.shared.domain.entity import Entity
 
 
 class AggregateRoot(Entity):

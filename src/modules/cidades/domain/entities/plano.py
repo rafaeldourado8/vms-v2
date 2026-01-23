@@ -2,7 +2,7 @@
 from enum import Enum
 from uuid import UUID
 
-from src.shared_kernel.domain.entity import Entity
+from src.shared.domain.entity import Entity
 
 
 class TipoPlano(str, Enum):

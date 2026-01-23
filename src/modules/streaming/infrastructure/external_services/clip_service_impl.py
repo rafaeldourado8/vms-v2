@@ -3,7 +3,7 @@ import os
 import asyncio
 from datetime import datetime
 from src.streaming.domain.services.clip_service import ClipService
-from src.shared_kernel.infrastructure.logger import Logger
+from src.shared.infrastructure.logger import Logger
 
 
 class ClipServiceImpl(ClipService):

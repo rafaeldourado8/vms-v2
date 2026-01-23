@@ -1,7 +1,7 @@
 """API URLs."""
 from django.urls import path
 
-from src.admin.infrastructure.web.django_app.views import assign_role, create_user
+from src.modules.admin.infrastructure.web.django_app.views import assign_role, create_user
 
 urlpatterns = [
     path("", create_user, name="create_user"),

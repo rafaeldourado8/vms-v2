@@ -1,8 +1,8 @@
 """Mosaic entity."""
 from uuid import UUID
 from typing import List
-from src.shared_kernel.domain.entity import Entity
-from src.shared_kernel.domain.domain_exception import DomainException
+from src.shared.domain.entity import Entity
+from src.shared.domain.domain_exception import DomainException
 
 
 class Mosaic(Entity):

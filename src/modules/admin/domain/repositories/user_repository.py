@@ -2,9 +2,9 @@
 from abc import abstractmethod
 from typing import Optional
 
-from src.admin.domain.aggregates.user import User
-from src.admin.domain.value_objects.email import Email
-from src.shared_kernel.domain.repository import Repository
+from src.modules.admin.domain.aggregates.user import User
+from src.modules.admin.domain.value_objects.email import Email
+from src.shared.domain.repository import Repository
 
 
 class IUserRepository(Repository[User]):

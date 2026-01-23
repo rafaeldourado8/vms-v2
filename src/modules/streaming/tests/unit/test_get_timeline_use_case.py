@@ -7,7 +7,7 @@ from src.streaming.application.dtos.get_timeline_dto import GetTimelineDTO
 from src.streaming.domain.entities.recording import Recording
 from src.streaming.domain.value_objects.retention_policy import RetentionPolicy
 from src.streaming.infrastructure.persistence.recording_repository_impl import RecordingRepositoryImpl
-from src.shared_kernel.domain.domain_exception import DomainException
+from src.shared.domain.domain_exception import DomainException
 
 
 @pytest.mark.asyncio

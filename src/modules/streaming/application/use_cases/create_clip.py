@@ -1,13 +1,13 @@
 """Create clip use case."""
 from uuid import uuid4
-from src.shared_kernel.application.use_case import UseCase
+from src.shared.application.use_case import UseCase
 from src.streaming.application.dtos.create_clip_dto import CreateClipDTO
 from src.streaming.application.dtos.clip_response_dto import ClipResponseDTO
 from src.streaming.domain.entities.clip import Clip
 from src.streaming.domain.repositories.clip_repository import ClipRepository
 from src.streaming.domain.repositories.recording_repository import RecordingRepository
-from src.shared_kernel.domain.domain_exception import DomainException
-from src.shared_kernel.infrastructure.message_broker import MessageBroker
+from src.shared.domain.domain_exception import DomainException
+from src.shared.infrastructure.message_broker import MessageBroker
 
 
 class CreateClipUseCase(UseCase[CreateClipDTO, ClipResponseDTO]):

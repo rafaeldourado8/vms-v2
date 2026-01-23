@@ -1,7 +1,7 @@
 """Django Admin for Cidades."""
 from django.contrib import admin
 
-from src.cidades.infrastructure.persistence.models import (
+from src.modules.cidades.infrastructure.persistence.models import (
     CidadeModel,
     PlanoModel,
     UsuarioCidadeModel,

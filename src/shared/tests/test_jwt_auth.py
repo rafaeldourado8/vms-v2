@@ -1,7 +1,7 @@
 """Tests for JWT Authentication"""
 import pytest
 from uuid import UUID
-from src.shared_kernel.infrastructure.security import (
+from src.shared.infrastructure.security import (
     create_access_token,
     create_refresh_token,
     decode_token,

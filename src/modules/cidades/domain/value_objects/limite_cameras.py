@@ -1,6 +1,6 @@
 """Limite de Câmeras value object."""
-from src.shared_kernel.domain.domain_exception import ValidationException
-from src.shared_kernel.domain.value_object import ValueObject
+from src.shared.domain.domain_exception import ValidationException
+from src.shared.domain.value_object import ValueObject
 
 
 class LimiteCameras(ValueObject):

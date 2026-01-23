@@ -8,8 +8,8 @@ from src.streaming.domain.entities.recording import Recording
 from src.streaming.domain.value_objects.retention_policy import RetentionPolicy
 from src.streaming.infrastructure.persistence.clip_repository_impl import ClipRepositoryImpl
 from src.streaming.infrastructure.persistence.recording_repository_impl import RecordingRepositoryImpl
-from src.shared_kernel.infrastructure.message_broker import MessageBroker
-from src.shared_kernel.domain.domain_exception import DomainException
+from src.shared.infrastructure.message_broker import MessageBroker
+from src.shared.domain.domain_exception import DomainException
 
 
 @pytest.mark.asyncio

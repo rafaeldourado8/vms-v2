@@ -1,10 +1,10 @@
 """Stop recording use case."""
 from uuid import UUID
-from src.shared_kernel.application.use_case import UseCase
+from src.shared.application.use_case import UseCase
 from src.streaming.domain.repositories.recording_repository import RecordingRepository
-from src.shared_kernel.domain.domain_exception import DomainException
-from src.shared_kernel.infrastructure.message_broker import MessageBroker
-from src.shared_kernel.infrastructure.observability import BusinessMetrics
+from src.shared.domain.domain_exception import DomainException
+from src.shared.infrastructure.message_broker import MessageBroker
+from src.shared.infrastructure.observability import BusinessMetrics
 
 
 class StopRecordingUseCase(UseCase[UUID, None]):

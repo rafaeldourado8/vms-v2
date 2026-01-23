@@ -2,7 +2,7 @@
 from uuid import UUID
 from datetime import datetime
 from pydantic import BaseModel, validator
-from src.shared_kernel.domain.domain_exception import DomainException
+from src.shared.domain.domain_exception import DomainException
 
 
 class CreateClipDTO(BaseModel):

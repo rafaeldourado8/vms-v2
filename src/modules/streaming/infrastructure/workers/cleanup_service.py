@@ -2,7 +2,7 @@
 import asyncio
 from src.streaming.infrastructure.persistence.recording_repository_impl import RecordingRepositoryImpl
 from src.streaming.infrastructure.external_services.storage_service_impl import MinIOStorageService
-from src.shared_kernel.infrastructure.logger import Logger
+from src.shared.infrastructure.logger import Logger
 
 
 class CleanupService:

@@ -2,13 +2,13 @@
 from typing import List, Optional
 from uuid import UUID
 
-from src.admin.domain.aggregates.user import User
-from src.admin.domain.entities.permission import Permission
-from src.admin.domain.entities.role import Role
-from src.admin.domain.repositories.user_repository import IUserRepository
-from src.admin.domain.value_objects.email import Email
-from src.admin.domain.value_objects.password import Password
-from src.admin.infrastructure.persistence.models import UserModel
+from src.modules.admin.domain.aggregates.user import User
+from src.modules.admin.domain.entities.permission import Permission
+from src.modules.admin.domain.entities.role import Role
+from src.modules.admin.domain.repositories.user_repository import IUserRepository
+from src.modules.admin.domain.value_objects.email import Email
+from src.modules.admin.domain.value_objects.password import Password
+from src.modules.admin.infrastructure.persistence.models import UserModel
 
 
 class UserRepository(IUserRepository):

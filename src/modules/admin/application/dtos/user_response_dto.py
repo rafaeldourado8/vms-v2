@@ -2,7 +2,7 @@
 from typing import List
 from uuid import UUID
 
-from src.shared_kernel.application.dto import DTO
+from src.shared.application.dto import DTO
 
 
 class UserResponseDTO(DTO):

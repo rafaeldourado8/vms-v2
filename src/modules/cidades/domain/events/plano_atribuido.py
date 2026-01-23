@@ -1,7 +1,7 @@
 """PlanoAtribuido domain event."""
 from uuid import UUID
 
-from src.shared_kernel.domain.domain_event import DomainEvent
+from src.shared.domain.domain_event import DomainEvent
 
 
 class PlanoAtribuido(DomainEvent):

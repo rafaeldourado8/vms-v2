@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { GoogleMap, LoadScript, Marker, InfoWindow } from '@react-google-maps/api';
+import { GoogleMap, useLoadScript, Marker, InfoWindow } from '@react-google-maps/api';
 import { useSnapshot } from '@/hooks/useThumbnails';
 import { Button } from '@/components/ui/button';
 import CameraStatusBadge from './CameraStatusBadge';
@@ -56,6 +56,10 @@ const GoogleMapViewer = ({ cameras, onCameraClick, height = '500px' }: GoogleMap
   const [selectedCamera, setSelectedCamera] = useState<Camera | null>(null);
   const [map, setMap] = useState<google.maps.Map | null>(null);
 
+  const { isLoaded } = useLoadScript({
+    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY
+  });
+
   const mapContainerStyle = {
     width: '100%',
     height
@@ -80,6 +84,11 @@ const GoogleMapViewer = ({ cameras, onCameraClick, height = '500px' }: GoogleMap
   };
 
   const getMarkerIcon = (status: string) => {
+    // Verificar se google.maps está disponível
+    if (typeof google === 'undefined' || !google.maps) {
+      return undefined;
+    }
+
     const colors = {
       online: '#10b981',
       offline: '#ef4444',
@@ -107,9 +116,10 @@ const GoogleMapViewer = ({ cameras, onCameraClick, height = '500px' }: GoogleMap
     }
   };
 
+  if (!isLoaded) return <div className="flex items-center justify-center" style={{ height }}>Carregando mapa...</div>;
+
   return (
-    <LoadScript googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
-      <GoogleMap
+    <GoogleMap
         mapContainerStyle={mapContainerStyle}
         center={center}
         zoom={12}
@@ -133,7 +143,7 @@ const GoogleMapViewer = ({ cameras, onCameraClick, height = '500px' }: GoogleMap
             position={{ lat: camera.latitude, lng: camera.longitude }}
             icon={getMarkerIcon(camera.status)}
             onClick={() => setSelectedCamera(camera)}
-            animation={camera.status === 'warning' ? google.maps.Animation.BOUNCE : undefined}
+            animation={camera.status === 'warning' && typeof google !== 'undefined' && google.maps ? google.maps.Animation.BOUNCE : undefined}
           />
         ))}
 
@@ -152,7 +162,6 @@ const GoogleMapViewer = ({ cameras, onCameraClick, height = '500px' }: GoogleMap
           </InfoWindow>
         )}
       </GoogleMap>
-    </LoadScript>
   );
 };
 

@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from typing import Optional, List
 from uuid import UUID
 
-from src.cidades.domain.entities.camera import Camera
+from src.modules.cidades.domain.entities.camera import Camera
 
 
 class CameraRepository(ABC):

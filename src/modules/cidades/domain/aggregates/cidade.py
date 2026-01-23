@@ -2,15 +2,15 @@
 from typing import List, Optional
 from uuid import UUID
 
-from src.cidades.domain.entities.camera import Camera
-from src.cidades.domain.entities.plano import Plano
-from src.cidades.domain.entities.usuario_cidade import TipoUsuarioCidade, UsuarioCidade
-from src.cidades.domain.events.cidade_criada import CidadeCriada
-from src.cidades.domain.events.plano_atribuido import PlanoAtribuido
-from src.cidades.domain.value_objects.cnpj import CNPJ
-from src.cidades.domain.value_objects.limite_cameras import LimiteCameras
-from src.shared_kernel.domain.aggregate_root import AggregateRoot
-from src.shared_kernel.domain.domain_exception import (
+from src.modules.cidades.domain.entities.camera import Camera
+from src.modules.cidades.domain.entities.plano import Plano
+from src.modules.cidades.domain.entities.usuario_cidade import TipoUsuarioCidade, UsuarioCidade
+from src.modules.cidades.domain.events.cidade_criada import CidadeCriada
+from src.modules.cidades.domain.events.plano_atribuido import PlanoAtribuido
+from src.modules.cidades.domain.value_objects.cnpj import CNPJ
+from src.modules.cidades.domain.value_objects.limite_cameras import LimiteCameras
+from src.shared.domain.aggregate_root import AggregateRoot
+from src.shared.domain.domain_exception import (
     BusinessRuleViolationException,
     ValidationException,
 )

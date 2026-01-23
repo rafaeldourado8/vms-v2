@@ -1,5 +1,5 @@
 """Authenticate DTO."""
-from src.shared_kernel.application.dto import DTO
+from src.shared.application.dto import DTO
 
 
 class AuthenticateDTO(DTO):

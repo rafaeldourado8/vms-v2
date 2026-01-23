@@ -1,12 +1,12 @@
 """Generate thumbnails use case."""
 from uuid import UUID
 from typing import List
-from src.shared_kernel.application.use_case import UseCase
+from src.shared.application.use_case import UseCase
 from src.streaming.application.dtos.generate_thumbnails_dto import GenerateThumbnailsDTO
 from src.streaming.application.dtos.thumbnail_response_dto import ThumbnailResponseDTO
 from src.streaming.domain.repositories.recording_repository import RecordingRepository
 from src.streaming.domain.services.thumbnail_service import ThumbnailService
-from src.shared_kernel.domain.domain_exception import DomainException
+from src.shared.domain.domain_exception import DomainException
 
 
 class GenerateThumbnailsUseCase(UseCase[GenerateThumbnailsDTO, List[ThumbnailResponseDTO]]):

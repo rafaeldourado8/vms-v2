@@ -2,9 +2,9 @@
 from abc import abstractmethod
 from typing import Optional
 
-from src.cidades.domain.aggregates.cidade import Cidade
-from src.cidades.domain.value_objects.cnpj import CNPJ
-from src.shared_kernel.domain.repository import Repository
+from src.modules.cidades.domain.aggregates.cidade import Cidade
+from src.modules.cidades.domain.value_objects.cnpj import CNPJ
+from src.shared.domain.repository import Repository
 
 
 class ICidadeRepository(Repository[Cidade]):

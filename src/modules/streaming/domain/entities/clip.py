@@ -1,7 +1,7 @@
 """Clip entity."""
 from uuid import UUID
 from datetime import datetime
-from src.shared_kernel.domain.entity import Entity
+from src.shared.domain.entity import Entity
 from src.streaming.domain.value_objects.clip_status import ClipStatus
 
 

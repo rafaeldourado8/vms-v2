@@ -93,7 +93,7 @@ api.interceptors.response.use(
         headers: { 'Content-Type': 'application/json' },
       });
 
-      const resp = await plain.post('/admin/auth/refresh/', { refresh: refreshToken });
+      const resp = await plain.post('/v1/auth/refresh', { refresh: refreshToken });
 
       const newAccess = resp.data?.access;
       if (!newAccess) {

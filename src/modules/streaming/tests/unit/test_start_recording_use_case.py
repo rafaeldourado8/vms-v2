@@ -7,8 +7,8 @@ from src.streaming.domain.entities.stream import Stream
 from src.streaming.domain.value_objects.stream_status import StreamStatus
 from src.streaming.infrastructure.persistence.recording_repository_impl import RecordingRepositoryImpl
 from src.streaming.infrastructure.persistence.stream_repository_impl import StreamRepositoryImpl
-from src.shared_kernel.infrastructure.message_broker import MessageBroker
-from src.shared_kernel.domain.domain_exception import DomainException
+from src.shared.infrastructure.message_broker import MessageBroker
+from src.shared.domain.domain_exception import DomainException
 
 
 @pytest.mark.asyncio

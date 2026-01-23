@@ -19,13 +19,15 @@ interface AuthResponse {
 
 class AuthService {
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
-    const response = await api.post('/api/admin/auth/login/', credentials);
+    const response = await api.post('/v1/auth/login', {
+      email: credentials.username,
+      password: credentials.password
+    });
     
-    if (response.data.access) {
-      localStorage.setItem('token', response.data.access);
-      localStorage.setItem('refresh_token', response.data.refresh);
+    if (response.data.access_token) {
+      localStorage.setItem('token', response.data.access_token);
       localStorage.setItem('user', JSON.stringify(response.data.user));
-      localStorage.setItem('tenant_id', response.data.user.tenant_id);
+      localStorage.setItem('tenant_id', response.data.user.tenant_id || 'default');
     }
     
     return response.data;
@@ -38,7 +40,7 @@ class AuthService {
       throw new Error('No refresh token');
     }
 
-    const response = await api.post('/api/admin/auth/refresh/', {
+    const response = await api.post('/v1/auth/refresh', {
       refresh: refreshToken
     });
 

@@ -4,7 +4,7 @@ from uuid import uuid4
 from unittest.mock import AsyncMock, Mock
 from src.streaming.application.use_cases.start_stream import StartStreamUseCase
 from src.streaming.application.dtos.start_stream_dto import StartStreamDTO
-from src.shared_kernel.domain.domain_exception import DomainException
+from src.shared.domain.domain_exception import DomainException
 
 
 @pytest.mark.unit

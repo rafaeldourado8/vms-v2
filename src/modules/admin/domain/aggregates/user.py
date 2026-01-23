@@ -2,13 +2,13 @@
 from typing import List
 from uuid import UUID
 
-from src.admin.domain.entities.role import Role
-from src.admin.domain.events.user_authenticated import UserAuthenticated
-from src.admin.domain.events.user_created import UserCreated
-from src.admin.domain.value_objects.email import Email
-from src.admin.domain.value_objects.password import Password
-from src.shared_kernel.domain.aggregate_root import AggregateRoot
-from src.shared_kernel.domain.domain_exception import (
+from src.modules.admin.domain.entities.role import Role
+from src.modules.admin.domain.events.user_authenticated import UserAuthenticated
+from src.modules.admin.domain.events.user_created import UserCreated
+from src.modules.admin.domain.value_objects.email import Email
+from src.modules.admin.domain.value_objects.password import Password
+from src.shared.domain.aggregate_root import AggregateRoot
+from src.shared.domain.domain_exception import (
     BusinessRuleViolationException,
     ValidationException,
 )

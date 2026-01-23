@@ -2,10 +2,10 @@
 from typing import List, Optional
 from uuid import UUID
 
-from src.admin.domain.entities.permission import Permission
-from src.admin.domain.entities.role import Role
-from src.admin.domain.repositories.role_repository import IRoleRepository
-from src.admin.infrastructure.persistence.models import RoleModel
+from src.modules.admin.domain.entities.permission import Permission
+from src.modules.admin.domain.entities.role import Role
+from src.modules.admin.domain.repositories.role_repository import IRoleRepository
+from src.modules.admin.infrastructure.persistence.models import RoleModel
 
 
 class RoleRepository(IRoleRepository):

@@ -4,18 +4,18 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
-from src.admin.application.dtos.assign_role_dto import AssignRoleDTO
-from src.admin.application.dtos.create_user_dto import CreateUserDTO
-from src.admin.application.use_cases.assign_role import AssignRoleUseCase
-from src.admin.application.use_cases.create_user import CreateUserUseCase
-from src.admin.infrastructure.persistence.role_repository_impl import RoleRepository
-from src.admin.infrastructure.persistence.user_repository_impl import UserRepository
-from src.admin.infrastructure.web.django_app.serializers import (
+from src.modules.admin.application.dtos.assign_role_dto import AssignRoleDTO
+from src.modules.admin.application.dtos.create_user_dto import CreateUserDTO
+from src.modules.admin.application.use_cases.assign_role import AssignRoleUseCase
+from src.modules.admin.application.use_cases.create_user import CreateUserUseCase
+from src.modules.admin.infrastructure.persistence.role_repository_impl import RoleRepository
+from src.modules.admin.infrastructure.persistence.user_repository_impl import UserRepository
+from src.modules.admin.infrastructure.web.django_app.serializers import (
     AssignRoleSerializer,
     CreateUserSerializer,
     UserResponseSerializer,
 )
-from src.shared_kernel.application.event_bus import EventBus
+from src.shared.application.event_bus import EventBus
 
 
 @api_view(["POST"])

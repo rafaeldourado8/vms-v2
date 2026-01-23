@@ -1,10 +1,63 @@
 from fastapi import APIRouter, Header, HTTPException, status
+from pydantic import BaseModel
 from typing import Optional
 import jwt
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 router = APIRouter(prefix="/auth", tags=["auth"])
+
+
+SECRET_KEY = "GT_VISION_SECRET_2025"  # TODO: Mover para .env
+ALGORITHM = "HS256"
+
+
+class LoginRequest(BaseModel):
+    email: str
+    password: str
+
+
+class LoginResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+    user: dict
+
+
+@router.post("/login", response_model=LoginResponse)
+async def login(request: LoginRequest):
+    """
+    Autentica usuário e retorna JWT.
+    
+    TODO: Integrar com Django User Model via API ou banco direto
+    Por enquanto, aceita qualquer credencial para desenvolvimento.
+    """
+    
+    # Mock - aceita qualquer email/senha
+    # TODO: Validar contra banco de dados
+    if not request.email or not request.password:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Email and password are required"
+        )
+    
+    # Gerar JWT
+    payload = {
+        "sub": request.email,
+        "email": request.email,
+        "tenant_id": "default",  # TODO: Buscar do banco
+        "exp": datetime.utcnow() + timedelta(hours=8),
+        "iat": datetime.utcnow()
+    }
+    
+    token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
+    
+    return LoginResponse(
+        access_token=token,
+        user={
+            "email": request.email,
+            "name": request.email.split("@")[0].title()
+        }
+    )
 
 
 SECRET_KEY = "GT_VISION_SECRET_2025"  # TODO: Mover para .env

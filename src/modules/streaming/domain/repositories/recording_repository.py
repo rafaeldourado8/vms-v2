@@ -3,7 +3,7 @@ from abc import abstractmethod
 from uuid import UUID
 from typing import List, Optional
 from datetime import datetime
-from src.shared_kernel.domain.repository import Repository
+from src.shared.domain.repository import Repository
 from src.streaming.domain.entities.recording import Recording
 
 

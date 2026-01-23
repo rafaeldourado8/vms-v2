@@ -1,10 +1,10 @@
 """Update mosaic use case."""
 from uuid import UUID
-from src.shared_kernel.application.use_case import UseCase
+from src.shared.application.use_case import UseCase
 from src.streaming.application.dtos.update_mosaic_dto import UpdateMosaicDTO
 from src.streaming.application.dtos.mosaic_response_dto import MosaicResponseDTO
 from src.streaming.domain.repositories.mosaic_repository import MosaicRepository
-from src.shared_kernel.domain.domain_exception import DomainException
+from src.shared.domain.domain_exception import DomainException
 
 
 class UpdateMosaicUseCase(UseCase[UpdateMosaicDTO, MosaicResponseDTO]):

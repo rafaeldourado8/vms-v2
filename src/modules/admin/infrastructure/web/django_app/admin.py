@@ -1,7 +1,7 @@
 """Django Admin configuration."""
 from django.contrib import admin
 
-from src.admin.infrastructure.persistence.models import (
+from src.modules.admin.infrastructure.persistence.models import (
     PermissionModel,
     RoleModel,
     UserModel,

@@ -1,6 +1,6 @@
 """Tests for RBAC"""
 import pytest
-from src.shared_kernel.infrastructure.security.rbac import (
+from src.shared.infrastructure.security.rbac import (
     Role,
     Permission,
     has_permission,

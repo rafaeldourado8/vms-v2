@@ -2,7 +2,7 @@
 from uuid import UUID
 from pydantic import BaseModel, Field, validator
 from typing import List
-from src.shared_kernel.domain.domain_exception import DomainException
+from src.shared.domain.domain_exception import DomainException
 
 
 class CreateMosaicDTO(BaseModel):

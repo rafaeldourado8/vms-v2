@@ -4,7 +4,7 @@ from typing import Optional
 from minio import Minio
 from minio.error import S3Error
 from src.streaming.domain.services.storage_service import StorageService
-from src.shared_kernel.infrastructure.logger import Logger
+from src.shared.infrastructure.logger import Logger
 
 
 class MinIOStorageService(StorageService):

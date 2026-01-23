@@ -1,6 +1,6 @@
 """Create mosaic use case."""
 from uuid import uuid4
-from src.shared_kernel.application.use_case import UseCase
+from src.shared.application.use_case import UseCase
 from src.streaming.application.dtos.create_mosaic_dto import CreateMosaicDTO
 from src.streaming.application.dtos.mosaic_response_dto import MosaicResponseDTO
 from src.streaming.domain.entities.mosaic import Mosaic

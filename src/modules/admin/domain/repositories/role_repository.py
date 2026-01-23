@@ -2,8 +2,8 @@
 from abc import abstractmethod
 from typing import Optional
 
-from src.admin.domain.entities.role import Role
-from src.shared_kernel.domain.repository import Repository
+from src.modules.admin.domain.entities.role import Role
+from src.shared.domain.repository import Repository
 
 
 class IRoleRepository(Repository[Role]):

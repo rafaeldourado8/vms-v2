@@ -2,7 +2,7 @@
 import pytest
 from uuid import uuid4
 from src.streaming.domain.entities.mosaic import Mosaic
-from src.shared_kernel.domain.domain_exception import DomainException
+from src.shared.domain.domain_exception import DomainException
 
 
 def test_mosaic_creation():

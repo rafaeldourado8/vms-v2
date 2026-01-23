@@ -1,7 +1,7 @@
 """URLs for Cidades API."""
 from django.urls import path
 
-from src.cidades.infrastructure.web.views import (
+from src.modules.cidades.infrastructure.web.views import (
     add_usuario_cidade,
     create_cidade,
     list_cidades,

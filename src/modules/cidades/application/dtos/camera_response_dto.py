@@ -1,7 +1,7 @@
 """Camera Response DTO."""
 from uuid import UUID
 
-from src.shared_kernel.application.dto import DTO
+from src.shared.application.dto import DTO
 
 
 class CameraResponseDTO(DTO):

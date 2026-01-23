@@ -1,8 +1,8 @@
 """Tests for AggregateRoot base class."""
 import pytest
 
-from src.shared_kernel.domain.aggregate_root import AggregateRoot
-from src.shared_kernel.domain.domain_event import DomainEvent
+from src.shared.domain.aggregate_root import AggregateRoot
+from src.shared.domain.domain_event import DomainEvent
 
 
 class SampleEvent(DomainEvent):

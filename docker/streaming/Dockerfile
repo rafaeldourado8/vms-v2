@@ -26,11 +26,12 @@ RUN pip install --no-cache-dir \
     reportlab==4.0.9 \
     sqlalchemy==2.0.25 \
     psycopg2-binary==2.9.9 \
-    python-multipart==0.0.6
+    python-multipart==0.0.6 \
+    pywebpush==1.14.0
 
 # Copy source code
 COPY src/ ./src/
 
 EXPOSE 8001
 
-CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8001"]
+CMD ["python", "-m", "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8001"]

@@ -21,8 +21,8 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework_simplejwt",
     "corsheaders",
-    "src.admin.infrastructure.persistence.apps.AdminPersistenceConfig",
-    "src.cidades.infrastructure.persistence.apps.CidadesPersistenceConfig",
+    "src.modules.admin.infrastructure.persistence.apps.AdminPersistenceConfig",
+    "src.modules.cidades.infrastructure.persistence.apps.CidadesPersistenceConfig",
 ]
 
 MIDDLEWARE = [
@@ -36,7 +36,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = "src.admin.infrastructure.web.django_app.urls"
+ROOT_URLCONF = "src.modules.admin.infrastructure.web.django_app.urls"
 
 TEMPLATES = [
     {
@@ -121,14 +121,15 @@ LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {
-        "json": {
-            "()": "src.shared_kernel.infrastructure.logger.JSONFormatter",
+        "verbose": {
+            "format": "{levelname} {asctime} {module} {message}",
+            "style": "{",
         },
     },
     "handlers": {
         "console": {
             "class": "logging.StreamHandler",
-            "formatter": "json",
+            "formatter": "verbose",
         },
     },
     "root": {

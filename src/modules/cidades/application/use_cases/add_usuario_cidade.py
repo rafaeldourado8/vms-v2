@@ -1,10 +1,10 @@
 """Add Usuario Cidade Use Case."""
-from src.cidades.application.dtos.add_usuario_cidade_dto import AddUsuarioCidadeDTO
-from src.cidades.application.dtos.cidade_response_dto import CidadeResponseDTO
-from src.cidades.domain.entities.usuario_cidade import TipoUsuarioCidade, UsuarioCidade
-from src.cidades.domain.repositories.cidade_repository import ICidadeRepository
-from src.shared_kernel.application.use_case import UseCase
-from src.shared_kernel.domain.domain_exception import EntityNotFoundException
+from src.modules.cidades.application.dtos.add_usuario_cidade_dto import AddUsuarioCidadeDTO
+from src.modules.cidades.application.dtos.cidade_response_dto import CidadeResponseDTO
+from src.modules.cidades.domain.entities.usuario_cidade import TipoUsuarioCidade, UsuarioCidade
+from src.modules.cidades.domain.repositories.cidade_repository import ICidadeRepository
+from src.shared.application.use_case import UseCase
+from src.shared.domain.domain_exception import EntityNotFoundException
 
 
 class AddUsuarioCidadeUseCase(UseCase[AddUsuarioCidadeDTO, CidadeResponseDTO]):

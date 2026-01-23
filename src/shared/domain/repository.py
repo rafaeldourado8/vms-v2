@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from typing import Generic, List, Optional, TypeVar
 from uuid import UUID
 
-from src.shared_kernel.domain.aggregate_root import AggregateRoot
+from src.shared.domain.aggregate_root import AggregateRoot
 
 T = TypeVar("T", bound=AggregateRoot)
 

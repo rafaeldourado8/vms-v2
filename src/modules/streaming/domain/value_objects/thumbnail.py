@@ -1,6 +1,6 @@
 """Thumbnail value object."""
 from datetime import datetime
-from src.shared_kernel.domain.value_object import ValueObject
+from src.shared.domain.value_object import ValueObject
 
 
 class Thumbnail(ValueObject):

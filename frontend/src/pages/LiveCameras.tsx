@@ -1,213 +1,285 @@
-import React, { useState, useRef } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { List, X, Maximize2, Minimize2, Loader2 } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+import { useQuery, keepPreviousData } from "@tanstack/react-query";
+import { Edit, Trash2, Loader2, PlayCircle, AlertCircle, Video } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Card } from "@/components/ui/card";
 import api from "@/lib/axios";
-import { useToast } from "@/hooks/use-toast";
-import { useWebSocket } from "@/hooks/useWebSocket";
-import { useThumbnails } from "@/hooks/useThumbnails";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import VideoPlayer from "@/components/VideoPlayer";
-import Timeline from "@/components/Timeline";
-import CameraSideList from "@/components/CameraSideList";
-import GoogleMapViewer from "@/components/GoogleMapViewer";
-import { cn } from "@/lib/utils";
 
 interface CameraType {
   id: number;
   name: string;
   location: string;
-  latitude: number;
-  longitude: number;
   status: "online" | "offline" | "warning";
   thumbnail_url?: string | null;
   stream_url_frontend: string;
-  stream_key?: string;
 }
 
-const glassSheetClasses = "bg-black/30 backdrop-blur-xl border-r border-white/10 text-white shadow-2xl";
+// --- Componente de Thumbnail Inteligente (Lazy + 5s Stream + Snapshot) ---
+const StreamingThumbnail = ({ 
+  streamUrl, 
+  posterUrl, 
+  alt 
+}: { 
+  streamUrl: string; 
+  posterUrl?: string | null; 
+  alt: string; 
+}) => {
+  const [mode, setMode] = useState<'idle' | 'streaming' | 'snapshot'>('idle');
+  const [snapshotSrc, setSnapshotSrc] = useState<string | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  // 1. Lazy Loading: Ativa stream apenas quando entra na tela
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && mode === 'idle') {
+          setMode('streaming');
+        }
+      },
+      { threshold: 0.1, rootMargin: '50px' }
+    );
+
+    if (containerRef.current) observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, [mode]);
+
+  // 2. Lógica: Toca 5s -> Tira Foto -> Para Stream
+  useEffect(() => {
+    if (mode === 'streaming' && videoRef.current) {
+      const videoEl = videoRef.current;
+      
+      // Mudo é obrigatório para autoplay
+      videoEl.muted = true; 
+      videoEl.volume = 0;
+
+      const handlePlaying = () => {
+        const timer = setTimeout(() => {
+          captureSnapshot(videoEl);
+        }, 5000); // 5 segundos de "preview" vivo
+        return () => clearTimeout(timer);
+      };
+
+      videoEl.play().catch(() => console.log("Autoplay retido"));
+      videoEl.addEventListener('playing', handlePlaying, { once: true });
+      
+      // Timeout de segurança caso stream falhe
+      const safety = setTimeout(() => setMode('snapshot'), 15000);
+
+      return () => {
+        videoEl.removeEventListener('playing', handlePlaying);
+        clearTimeout(safety);
+      };
+    }
+  }, [mode]);
+
+  const captureSnapshot = (videoEl: HTMLVideoElement) => {
+    try {
+      const canvas = document.createElement('canvas');
+      canvas.width = videoEl.videoWidth || 640;
+      canvas.height = videoEl.videoHeight || 360;
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.drawImage(videoEl, 0, 0, canvas.width, canvas.height);
+        setSnapshotSrc(canvas.toDataURL('image/jpeg', 0.7));
+      }
+    } catch (e) {
+      console.warn("Erro no snapshot (CORS?):", e);
+    } finally {
+      setMode('snapshot');
+    }
+  };
+
+  return (
+    <div ref={containerRef} className="w-full sm:w-48 h-32 sm:h-28 bg-black/40 rounded-lg overflow-hidden relative shrink-0 border border-white/10 shadow-inner">
+      {mode === 'idle' && (
+        <div className="w-full h-full flex items-center justify-center backdrop-blur-sm">
+          <Loader2 className="w-5 h-5 animate-spin text-white/30" />
+        </div>
+      )}
+
+      {mode === 'streaming' && (
+        <VideoPlayer
+          url={streamUrl}
+          poster={posterUrl}
+          videoRefProp={videoRef}
+          className="w-full h-full pointer-events-none object-cover" 
+        />
+      )}
+
+      {mode === 'snapshot' && (
+        <div className="relative w-full h-full group">
+          <img 
+            src={snapshotSrc || posterUrl || '/placeholder.jpg'} 
+            alt={alt} 
+            className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity" 
+          />
+          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40">
+             <Video className="w-6 h-6 text-white drop-shadow-lg" />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const LiveCameras: React.FC = () => {
+  const [page, setPage] = useState(1);
   const [selectedCamera, setSelectedCamera] = useState<CameraType | null>(null);
-  const [isPlayerExpanded, setIsPlayerExpanded] = useState(false);
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const { toast } = useToast();
 
-  // WebSocket para alertas LPR
-  const token = localStorage.getItem('token');
-  const { isConnected, lastDetection } = useWebSocket(token);
-
-  // Buscar câmeras
-  const { data: cameras = [], isLoading } = useQuery({
-    queryKey: ['cameras'],
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ['cameras', page],
     queryFn: async () => {
-      const response = await api.get("/cameras/");
-      const raw = response.data;
-      const list = Array.isArray(raw) ? raw : Array.isArray(raw?.results) ? raw.results : [];
-
-      return list.map((c: any) => {
-        let streamUrl = "";
-        if (c.stream_key) {
-           streamUrl = `/hls/${c.stream_key}/index.m3u8`;
-        } else {
-           streamUrl = c.stream_url_frontend || "";
-        }
-
-        return {
-          id: c.id,
-          name: c.name,
-          location: c.location || "Sem localização",
-          latitude: Number(c.latitude ?? 0),
-          longitude: Number(c.longitude ?? 0),
-          status: c.status || "offline",
-          thumbnail_url: c.thumbnail_url ?? c.thumbnail ?? null,
-          stream_url_frontend: streamUrl,
-          stream_key: c.stream_key,
-        };
-      }) as CameraType[];
+      const response = await api.get(`/v1/cameras?page=${page}&limit=10`);
+      return response.data;
     },
-    staleTime: 1000 * 60 * 5,
+    placeholderData: keepPreviousData, 
   });
 
-  // Buscar thumbnails da câmera selecionada
-  const { data: thumbnails = [] } = useThumbnails(selectedCamera?.id);
+  const cameras = data?.results || [];
+  const total = data?.total || 0;
+  const totalPages = Math.ceil(total / 10);
 
-  const handleCameraSelect = (cam: CameraType) => {
-    setSelectedCamera(cam);
-  };
-
-  const handleClosePlayer = () => {
-    setSelectedCamera(null);
-    setIsPlayerExpanded(false);
-  };
-
-  // Mostrar alerta quando houver detecção LPR
-  React.useEffect(() => {
-    if (lastDetection) {
-      toast({
-        title: "🚗 Placa Detectada",
-        description: `${lastDetection.placa} - Câmera ${lastDetection.camera_id}`,
-        duration: 5000,
-      });
-    }
-  }, [lastDetection, toast]);
-
-  if (isLoading) {
-    return <div className="h-full w-full bg-zinc-950 flex items-center justify-center">
-      <Loader2 className="animate-spin text-white w-8 h-8"/>
-    </div>;
+  // Loading Skeleton Glass
+  if (isLoading && !data) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full gap-3 text-white/60">
+        <Loader2 className="animate-spin w-8 h-8" />
+        <span className="font-light tracking-widest text-sm">SINCRONIZANDO FEEDS...</span>
+      </div>
+    );
   }
 
   return (
-    <div className="h-full w-full relative bg-zinc-950 overflow-hidden">
+    // Container principal transparente para mostrar o mapa de fundo
+    <div className="p-6 max-w-7xl mx-auto space-y-6 animate-in fade-in duration-700">
       
-      {/* MAPA GOOGLE MAPS */}
-      <div className="absolute inset-0 z-0">
-        <GoogleMapViewer
-          cameras={cameras}
-          height="100%"
-          onCameraClick={handleCameraSelect}
-        />
-      </div>
-
-      {/* SIDEBAR FLUTUANTE */}
-      <div className="absolute top-4 left-4 z-10">
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button size="icon" className="h-10 w-10 rounded-xl shadow-lg bg-black/40 backdrop-blur-md hover:bg-black/60 border border-white/10 text-white transition-all duration-300">
-              <List className="h-5 w-5" />
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="left" className={`p-0 w-[320px] sm:w-[380px] ${glassSheetClasses}`}>
-             <div className="h-full pt-12 px-1"> 
-                <CameraSideList 
-                  cameras={cameras} 
-                  selectedId={selectedCamera?.id} 
-                  onSelect={(cam) => {
-                      const fullCam = cameras.find(c => c.id === cam.id);
-                      if (fullCam) handleCameraSelect(fullCam);
-                  }} 
-                />
-             </div>
-          </SheetContent>
-        </Sheet>
-      </div>
-
-      {/* STATUS WEBSOCKET */}
-      <div className="absolute top-4 right-4 z-10">
-        <div className={cn(
-          "px-3 py-1.5 rounded-full text-xs font-medium backdrop-blur-md border",
-          isConnected 
-            ? "bg-green-500/20 border-green-500/30 text-green-300" 
-            : "bg-red-500/20 border-red-500/30 text-red-300"
-        )}>
-          {isConnected ? "● Conectado" : "○ Desconectado"}
+      {/* Header com efeito Glass */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-black/40 backdrop-blur-xl p-6 rounded-2xl border border-white/10 shadow-2xl">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-white drop-shadow-md flex items-center gap-2">
+            <div className="w-3 h-3 rounded-full bg-red-500 animate-pulse shadow-[0_0_10px_rgba(239,68,68,0.8)]" />
+            Monitoramento Tático
+          </h1>
+          <p className="text-zinc-400 text-sm mt-1">
+            {total} unidades ativas no perímetro
+          </p>
         </div>
+        <Button 
+          variant="outline" 
+          onClick={() => setPage(1)} 
+          className="bg-white/5 border-white/10 hover:bg-white/10 text-white"
+        >
+          Atualizar Grade
+        </Button>
       </div>
-
-      {/* PLAYER + TIMELINE */}
-      <div 
-        className={cn(
-          "absolute bottom-0 left-0 right-0 z-20 transition-transform duration-500 ease-in-out bg-black/90 backdrop-blur-xl shadow-2xl border-t border-white/10 flex flex-col",
-          selectedCamera ? "translate-y-0" : "translate-y-full",
-          isPlayerExpanded ? "h-[90%]" : "h-[50%]"
-        )}
-      >
-        {selectedCamera && (
-          <>
-            {/* Header */}
-            <div className="flex items-center justify-between px-4 py-3 bg-white/5 border-b border-white/5 shrink-0">
-              <div className="flex items-center gap-3">
-                <div className={`w-2.5 h-2.5 rounded-full shadow-[0_0_8px_rgba(0,0,0,0.5)] ${selectedCamera.status === 'online' ? 'bg-green-500 shadow-green-500/50' : 'bg-red-500 shadow-red-500/50'} animate-pulse`} />
-                <div>
-                   <h3 className="font-semibold text-white text-sm leading-none">{selectedCamera.name}</h3>
-                   <p className="text-[10px] text-white/50 mt-0.5">{selectedCamera.location}</p>
+      
+      {/* Grid de Câmeras */}
+      <div className="grid gap-3">
+        {cameras.map((camera: CameraType) => (
+          <Card 
+            key={camera.id} 
+            // ESTILO GLASSMORFISM (Vidro)
+            className="group flex flex-col sm:flex-row items-center gap-4 p-3 bg-black/60 backdrop-blur-md border-white/10 hover:bg-black/70 hover:border-white/20 transition-all duration-300 cursor-pointer shadow-lg"
+            onDoubleClick={() => setSelectedCamera(camera)}
+          >
+            {/* Thumbnail */}
+            <StreamingThumbnail 
+              streamUrl={camera.stream_url_frontend} 
+              posterUrl={camera.thumbnail_url}
+              alt={camera.name}
+            />
+            
+            {/* Info */}
+            <div className="flex-1 w-full text-center sm:text-left space-y-2">
+              <div className="flex items-center justify-center sm:justify-start gap-3">
+                <h3 className="font-semibold text-lg text-white drop-shadow-sm">{camera.name}</h3>
+                
+                {/* Badge de Status Neon */}
+                <div className={`flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${
+                  camera.status === 'online' 
+                    ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30 shadow-[0_0_10px_rgba(16,185,129,0.2)]' 
+                    : 'bg-red-500/20 text-red-400 border-red-500/30'
+                }`}>
+                  <div className={`w-1.5 h-1.5 rounded-full ${camera.status === 'online' ? 'bg-emerald-400' : 'bg-red-400'}`} />
+                  {camera.status}
                 </div>
               </div>
               
-              <div className="flex items-center gap-1">
-                <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    className="h-8 w-8 text-white/50 hover:text-white hover:bg-white/10 rounded-full"
-                    onClick={() => setIsPlayerExpanded(!isPlayerExpanded)}
-                >
-                  {isPlayerExpanded ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
-                </Button>
-                <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    className="h-8 w-8 text-white/50 hover:text-red-400 hover:bg-red-500/10 rounded-full"
-                    onClick={handleClosePlayer}
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
+              <p className="text-sm text-zinc-400 flex items-center justify-center sm:justify-start gap-1 font-mono">
+                <span className="text-zinc-600">LOC:</span> {camera.location}
+              </p>
             </div>
 
-            {/* Vídeo */}
-            <div className="flex-1 relative bg-black overflow-hidden flex items-center justify-center">
-               <VideoPlayer
-                  url={selectedCamera.stream_url_frontend}
-                  poster={selectedCamera.thumbnail_url}
-                  className="w-full h-full"
-                  videoRefProp={videoRef}
-                />
+            {/* Ações */}
+            <div className="flex gap-2 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+               <Button 
+                variant="ghost" 
+                size="icon"
+                className="hover:bg-white/10 text-zinc-300 hover:text-white"
+               >
+                 <Edit className="w-4 h-4" />
+               </Button>
+               <Button 
+                variant="ghost" 
+                size="icon"
+                className="text-red-400/70 hover:text-red-400 hover:bg-red-500/10"
+               >
+                 <Trash2 className="w-4 h-4" />
+               </Button>
             </div>
-
-            {/* TIMELINE COM THUMBNAILS REAIS */}
-            <Timeline
-              thumbnails={thumbnails}
-              currentTime={0}
-              duration={86400}
-              isPlaying={false}
-              onSeek={(time) => console.log('Seek to:', time)}
-              onTogglePlay={() => console.log('Toggle play')}
-              className="border-0 bg-transparent"
-            />
-          </>
-        )}
+          </Card>
+        ))}
       </div>
+
+      {/* Paginação Glass */}
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center gap-4 mt-8 bg-black/40 backdrop-blur-md p-2 rounded-full border border-white/5 w-fit mx-auto shadow-xl">
+          <Button 
+            variant="ghost"
+            disabled={page === 1} 
+            onClick={() => setPage(p => p - 1)}
+            className="text-white hover:bg-white/10 rounded-full"
+          >
+            Anterior
+          </Button>
+          <span className="text-sm text-zinc-300 font-mono px-2">{page} / {totalPages}</span>
+          <Button 
+            variant="ghost"
+            disabled={page === totalPages} 
+            onClick={() => setPage(p => p + 1)}
+            className="text-white hover:bg-white/10 rounded-full"
+          >
+            Próxima
+          </Button>
+        </div>
+      )}
+
+      {/* Modal Player Fullscreen */}
+      <Dialog open={!!selectedCamera} onOpenChange={() => setSelectedCamera(null)}>
+        <DialogContent className="max-w-6xl bg-black/90 backdrop-blur-xl border-white/10 p-0 overflow-hidden shadow-2xl">
+          {selectedCamera && (
+            <div className="aspect-video w-full bg-black relative">
+              <div className="absolute top-0 left-0 right-0 z-20 p-4 bg-gradient-to-b from-black/90 to-transparent flex justify-between items-start pointer-events-none">
+                 <div>
+                    <h2 className="text-white font-bold text-lg drop-shadow-md">{selectedCamera.name}</h2>
+                    <p className="text-zinc-400 text-xs font-mono">{selectedCamera.location}</p>
+                 </div>
+                 <div className="px-3 py-1 rounded bg-red-600/80 backdrop-blur text-white text-[10px] font-bold animate-pulse shadow-lg border border-red-500/50">
+                    TRANSMISSÃO AO VIVO
+                 </div>
+              </div>
+              <VideoPlayer
+                url={selectedCamera.stream_url_frontend}
+                poster={selectedCamera.thumbnail_url}
+                className="w-full h-full"
+              />
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

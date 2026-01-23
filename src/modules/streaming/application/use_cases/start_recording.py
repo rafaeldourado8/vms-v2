@@ -1,15 +1,15 @@
 """Start recording use case."""
 from uuid import uuid4
-from src.shared_kernel.application.use_case import UseCase
+from src.shared.application.use_case import UseCase
 from src.streaming.application.dtos.start_recording_dto import StartRecordingDTO
 from src.streaming.application.dtos.recording_response_dto import RecordingResponseDTO
 from src.streaming.domain.entities.recording import Recording
 from src.streaming.domain.value_objects.retention_policy import RetentionPolicy
 from src.streaming.domain.repositories.recording_repository import RecordingRepository
 from src.streaming.domain.repositories.stream_repository import StreamRepository
-from src.shared_kernel.domain.domain_exception import DomainException
-from src.shared_kernel.infrastructure.message_broker import MessageBroker
-from src.shared_kernel.infrastructure.observability import BusinessMetrics
+from src.shared.domain.domain_exception import DomainException
+from src.shared.infrastructure.message_broker import MessageBroker
+from src.shared.infrastructure.observability import BusinessMetrics
 
 
 class StartRecordingUseCase(UseCase[StartRecordingDTO, RecordingResponseDTO]):

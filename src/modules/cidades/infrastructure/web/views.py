@@ -4,22 +4,22 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from src.cidades.application.dtos.add_usuario_cidade_dto import AddUsuarioCidadeDTO
-from src.cidades.application.dtos.create_cidade_dto import CreateCidadeDTO
-from src.cidades.application.dtos.create_camera_dto import CreateCameraDTO
-from src.cidades.application.use_cases.add_usuario_cidade import AddUsuarioCidadeUseCase
-from src.cidades.application.use_cases.create_cidade import CreateCidadeUseCase
-from src.cidades.application.use_cases.create_camera import CreateCameraUseCase
-from src.cidades.infrastructure.persistence.cidade_repository_impl import CidadeRepository
-from src.cidades.infrastructure.persistence.camera_repository_impl import CameraRepositoryImpl
-from src.cidades.infrastructure.web.serializers import (
+from src.modules.cidades.application.dtos.add_usuario_cidade_dto import AddUsuarioCidadeDTO
+from src.modules.cidades.application.dtos.create_cidade_dto import CreateCidadeDTO
+from src.modules.cidades.application.dtos.create_camera_dto import CreateCameraDTO
+from src.modules.cidades.application.use_cases.add_usuario_cidade import AddUsuarioCidadeUseCase
+from src.modules.cidades.application.use_cases.create_cidade import CreateCidadeUseCase
+from src.modules.cidades.application.use_cases.create_camera import CreateCameraUseCase
+from src.modules.cidades.infrastructure.persistence.cidade_repository_impl import CidadeRepository
+from src.modules.cidades.infrastructure.persistence.camera_repository_impl import CameraRepositoryImpl
+from src.modules.cidades.infrastructure.web.serializers import (
     AddUsuarioCidadeSerializer,
     CidadeResponseSerializer,
     CreateCidadeSerializer,
     CreateCameraSerializer,
     CameraResponseSerializer,
 )
-from src.shared_kernel.application.event_bus import EventBus
+from src.shared.application.event_bus import EventBus
 
 
 @api_view(["POST"])

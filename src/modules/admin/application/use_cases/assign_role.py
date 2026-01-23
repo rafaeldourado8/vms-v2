@@ -1,10 +1,10 @@
 """Assign Role Use Case."""
-from src.admin.application.dtos.assign_role_dto import AssignRoleDTO
-from src.admin.application.dtos.user_response_dto import UserResponseDTO
-from src.admin.domain.repositories.role_repository import IRoleRepository
-from src.admin.domain.repositories.user_repository import IUserRepository
-from src.shared_kernel.application.use_case import UseCase
-from src.shared_kernel.domain.domain_exception import EntityNotFoundException
+from src.modules.admin.application.dtos.assign_role_dto import AssignRoleDTO
+from src.modules.admin.application.dtos.user_response_dto import UserResponseDTO
+from src.modules.admin.domain.repositories.role_repository import IRoleRepository
+from src.modules.admin.domain.repositories.user_repository import IUserRepository
+from src.shared.application.use_case import UseCase
+from src.shared.domain.domain_exception import EntityNotFoundException
 
 
 class AssignRoleUseCase(UseCase[AssignRoleDTO, UserResponseDTO]):

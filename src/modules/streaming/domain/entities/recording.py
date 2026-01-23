@@ -1,7 +1,7 @@
 """Recording entity."""
 from uuid import UUID
 from datetime import datetime
-from src.shared_kernel.domain.entity import Entity
+from src.shared.domain.entity import Entity
 from src.streaming.domain.value_objects.recording_status import RecordingStatus
 from src.streaming.domain.value_objects.retention_policy import RetentionPolicy
 

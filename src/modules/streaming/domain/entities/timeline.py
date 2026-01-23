@@ -2,7 +2,7 @@
 from uuid import UUID
 from datetime import datetime
 from typing import List
-from src.shared_kernel.domain.entity import Entity
+from src.shared.domain.entity import Entity
 from src.streaming.domain.value_objects.timeline_segment import TimelineSegment
 
 

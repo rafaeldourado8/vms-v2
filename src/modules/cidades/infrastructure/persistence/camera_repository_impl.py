@@ -2,10 +2,10 @@
 from typing import Optional, List
 from uuid import UUID
 
-from src.cidades.domain.repositories.camera_repository import CameraRepository
-from src.cidades.domain.entities.camera import Camera
-from src.cidades.domain.value_objects.url_camera import URLCamera
-from src.cidades.domain.value_objects.status_camera import StatusCamera
+from src.modules.cidades.domain.repositories.camera_repository import CameraRepository
+from src.modules.cidades.domain.entities.camera import Camera
+from src.modules.cidades.domain.value_objects.url_camera import URLCamera
+from src.modules.cidades.domain.value_objects.status_camera import StatusCamera
 from .models import CameraModel
 
 

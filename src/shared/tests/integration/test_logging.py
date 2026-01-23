@@ -2,7 +2,7 @@
 import pytest
 import logging
 import json
-from src.shared_kernel.infrastructure.logging_config import JSONFormatter, setup_logging
+from src.shared.infrastructure.logging_config import JSONFormatter, setup_logging
 
 
 class TestJSONFormatter:
@@ -105,7 +105,7 @@ class TestLoggingSetup:
 
     def test_get_logger(self):
         """Test getting logger instance."""
-        from src.shared_kernel.infrastructure.logging_config import get_logger
+        from src.shared.infrastructure.logging_config import get_logger
 
         logger = get_logger("test_module")
         assert logger.name == "test_module"

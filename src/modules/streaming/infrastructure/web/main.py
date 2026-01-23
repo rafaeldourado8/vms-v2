@@ -35,12 +35,12 @@ from src.streaming.infrastructure.external_services.storage_service_impl import 
 from src.streaming.infrastructure.web.auth_routes import router as auth_router
 from src.streaming.infrastructure.web.lgpd_routes import router as lgpd_router
 from src.streaming.infrastructure.web.middleware import LoggingMiddleware
-from src.shared_kernel.infrastructure.message_broker import MessageBroker
-from src.shared_kernel.infrastructure.observability import prometheus_middleware
-from src.shared_kernel.infrastructure.security.dependencies import User, get_current_user, require_permission
-from src.shared_kernel.infrastructure.security.rbac import Permission
-from src.shared_kernel.infrastructure.security.rate_limiter import limiter, rate_limit_exceeded_handler
-from src.shared_kernel.infrastructure.logging_config import setup_logging
+from src.shared.infrastructure.message_broker import MessageBroker
+from src.shared.infrastructure.observability import prometheus_middleware
+from src.shared.infrastructure.security.dependencies import User, get_current_user, require_permission
+from src.shared.infrastructure.security.rbac import Permission
+from src.shared.infrastructure.security.rate_limiter import limiter, rate_limit_exceeded_handler
+from src.shared.infrastructure.logging_config import setup_logging
 from slowapi.errors import RateLimitExceeded
 import os
 

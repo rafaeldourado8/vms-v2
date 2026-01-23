@@ -1,6 +1,6 @@
 """Search recordings use case."""
 from typing import List
-from src.shared_kernel.application.use_case import UseCase
+from src.shared.application.use_case import UseCase
 from src.streaming.application.dtos.search_recordings_dto import SearchRecordingsDTO
 from src.streaming.application.dtos.recording_response_dto import RecordingResponseDTO
 from src.streaming.domain.repositories.recording_repository import RecordingRepository

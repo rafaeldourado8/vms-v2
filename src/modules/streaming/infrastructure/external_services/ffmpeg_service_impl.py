@@ -4,7 +4,7 @@ import os
 from uuid import UUID
 from typing import Dict
 from src.streaming.domain.services.ffmpeg_service import FFmpegService
-from src.shared_kernel.infrastructure.logger import Logger
+from src.shared.infrastructure.logger import Logger
 
 
 class FFmpegServiceImpl(FFmpegService):

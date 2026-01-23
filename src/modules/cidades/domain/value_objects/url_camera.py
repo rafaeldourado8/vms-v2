@@ -1,7 +1,7 @@
 """URL Camera value object."""
 from urllib.parse import urlparse
-from src.shared_kernel.domain.value_object import ValueObject
-from src.shared_kernel.domain.domain_exception import DomainException
+from src.shared.domain.value_object import ValueObject
+from src.shared.domain.domain_exception import DomainException
 
 
 class URLCamera(ValueObject):

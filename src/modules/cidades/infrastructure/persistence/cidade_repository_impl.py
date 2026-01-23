@@ -2,13 +2,13 @@
 from typing import List, Optional
 from uuid import UUID
 
-from src.cidades.domain.aggregates.cidade import Cidade
-from src.cidades.domain.entities.plano import Plano, TipoPlano
-from src.cidades.domain.entities.usuario_cidade import TipoUsuarioCidade, UsuarioCidade
-from src.cidades.domain.repositories.cidade_repository import ICidadeRepository
-from src.cidades.domain.value_objects.cnpj import CNPJ
-from src.cidades.domain.value_objects.limite_cameras import LimiteCameras
-from src.cidades.infrastructure.persistence.models import (
+from src.modules.cidades.domain.aggregates.cidade import Cidade
+from src.modules.cidades.domain.entities.plano import Plano, TipoPlano
+from src.modules.cidades.domain.entities.usuario_cidade import TipoUsuarioCidade, UsuarioCidade
+from src.modules.cidades.domain.repositories.cidade_repository import ICidadeRepository
+from src.modules.cidades.domain.value_objects.cnpj import CNPJ
+from src.modules.cidades.domain.value_objects.limite_cameras import LimiteCameras
+from src.modules.cidades.infrastructure.persistence.models import (
     CidadeModel,
     PlanoModel,
     UsuarioCidadeModel,

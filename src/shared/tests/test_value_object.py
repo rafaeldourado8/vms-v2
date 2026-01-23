@@ -1,7 +1,7 @@
 """Tests for ValueObject base class."""
 import pytest
 
-from src.shared_kernel.domain.value_object import ValueObject
+from src.shared.domain.value_object import ValueObject
 
 
 class Money(ValueObject):

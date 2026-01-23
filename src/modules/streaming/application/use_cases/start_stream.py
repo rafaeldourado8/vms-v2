@@ -1,14 +1,14 @@
 """Start stream use case."""
 from uuid import uuid4
-from src.shared_kernel.application.use_case import UseCase
+from src.shared.application.use_case import UseCase
 from src.streaming.application.dtos.start_stream_dto import StartStreamDTO
 from src.streaming.application.dtos.stream_response_dto import StreamResponseDTO
 from src.streaming.domain.entities.stream import Stream
 from src.streaming.domain.value_objects.stream_status import StreamStatus
 from src.streaming.domain.repositories.stream_repository import StreamRepository
 from src.streaming.domain.services.mediamtx_client import MediaMTXClient
-from src.shared_kernel.domain.domain_exception import DomainException
-from src.shared_kernel.infrastructure.observability import BusinessMetrics
+from src.shared.domain.domain_exception import DomainException
+from src.shared.infrastructure.observability import BusinessMetrics
 
 
 class StartStreamUseCase(UseCase[StartStreamDTO, StreamResponseDTO]):

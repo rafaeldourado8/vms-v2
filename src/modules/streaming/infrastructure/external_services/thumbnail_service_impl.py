@@ -4,7 +4,7 @@ import asyncio
 from typing import List
 from datetime import datetime, timedelta
 from src.streaming.domain.services.thumbnail_service import ThumbnailService
-from src.shared_kernel.infrastructure.logger import Logger
+from src.shared.infrastructure.logger import Logger
 
 
 class ThumbnailServiceImpl(ThumbnailService):

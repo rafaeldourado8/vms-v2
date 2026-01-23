@@ -1,7 +1,7 @@
 """Test Prometheus metrics."""
 import pytest
 import httpx
-from src.shared_kernel.infrastructure.observability import BusinessMetrics
+from src.shared.infrastructure.observability import BusinessMetrics
 
 
 @pytest.mark.asyncio

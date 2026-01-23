@@ -1,10 +1,10 @@
 """Stop stream use case."""
 from uuid import UUID
-from src.shared_kernel.application.use_case import UseCase
+from src.shared.application.use_case import UseCase
 from src.streaming.domain.repositories.stream_repository import StreamRepository
 from src.streaming.domain.services.mediamtx_client import MediaMTXClient
-from src.shared_kernel.domain.domain_exception import DomainException
-from src.shared_kernel.infrastructure.observability import BusinessMetrics
+from src.shared.domain.domain_exception import DomainException
+from src.shared.infrastructure.observability import BusinessMetrics
 
 
 class StopStreamUseCase(UseCase[UUID, None]):

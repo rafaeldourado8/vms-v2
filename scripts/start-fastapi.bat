@@ -1,0 +1,3 @@
+@echo off
+echo Iniciando GT-Vision FastAPI Streaming...
+poetry run python run_fastapi.py

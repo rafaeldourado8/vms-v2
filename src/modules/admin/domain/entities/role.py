@@ -2,8 +2,8 @@
 from typing import List
 from uuid import UUID
 
-from src.admin.domain.entities.permission import Permission
-from src.shared_kernel.domain.entity import Entity
+from src.modules.admin.domain.entities.permission import Permission
+from src.shared.domain.entity import Entity
 
 
 class Role(Entity):

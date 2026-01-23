@@ -1,7 +1,7 @@
 """Tests for RetentionPolicy value object."""
 import pytest
 from src.streaming.domain.value_objects.retention_policy import RetentionPolicy
-from src.shared_kernel.domain.domain_exception import DomainException
+from src.shared.domain.domain_exception import DomainException
 
 
 def test_retention_policy_valid():

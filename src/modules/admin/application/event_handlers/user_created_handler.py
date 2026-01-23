@@ -1,6 +1,6 @@
 """User Created Event Handler."""
-from src.admin.domain.events.user_created import UserCreated
-from src.shared_kernel.infrastructure.logger import setup_logger
+from src.modules.admin.domain.events.user_created import UserCreated
+from src.shared.infrastructure.logger import setup_logger
 
 logger = setup_logger(__name__)
 

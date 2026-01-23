@@ -1,7 +1,7 @@
 """Event Bus for domain events."""
 from typing import Callable, Dict, List, Type
 
-from src.shared_kernel.domain.domain_event import DomainEvent
+from src.shared.domain.domain_event import DomainEvent
 
 
 class EventBus:

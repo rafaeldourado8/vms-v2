@@ -6,8 +6,8 @@ from datetime import datetime
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 
-from src.shared_kernel.infrastructure.security.dependencies import User, get_current_user
-from src.shared_kernel.infrastructure.logging import elk_logger
+from src.shared.infrastructure.security.dependencies import User, get_current_user
+from src.shared.infrastructure.logging import elk_logger
 
 router = APIRouter(prefix="/api/lgpd", tags=["LGPD"])
 
@@ -31,7 +31,7 @@ class DataExportResponse(BaseModel):
 @router.get("/meus-dados", response_model=DataAccessResponse)
 async def get_my_data(user: Annotated[User, Depends(get_current_user)]):
     """Direito de acesso (Art. 18, I e II) - Confirmar e acessar dados pessoais"""
-    from src.shared_kernel.infrastructure.security.audit_log import AuditLog, AuditAction
+    from src.shared.infrastructure.security.audit_log import AuditLog, AuditAction
     
     # Audit log
     AuditLog.record(
@@ -69,7 +69,7 @@ async def export_my_data(
     format: str = "json"
 ):
     """Direito de portabilidade (Art. 18, V) - Exportar dados em formato estruturado"""
-    from src.shared_kernel.infrastructure.security.audit_log import AuditLog, AuditAction
+    from src.shared.infrastructure.security.audit_log import AuditLog, AuditAction
     
     # Audit log
     AuditLog.record(
@@ -98,7 +98,7 @@ async def export_my_data(
 @router.delete("/excluir")
 async def delete_my_data(user: Annotated[User, Depends(get_current_user)]):
     """Direito de exclusão (Art. 18, IV) - Solicitar exclusão/anonimização"""
-    from src.shared_kernel.infrastructure.security.audit_log import AuditLog, AuditAction
+    from src.shared.infrastructure.security.audit_log import AuditLog, AuditAction
     
     # Audit log
     AuditLog.record(
@@ -125,7 +125,7 @@ async def delete_my_data(user: Annotated[User, Depends(get_current_user)]):
 @router.post("/revogar-consentimento")
 async def revoke_consent(user: Annotated[User, Depends(get_current_user)]):
     """Direito de revogação (Art. 18, IX) - Revogar consentimento"""
-    from src.shared_kernel.infrastructure.security.audit_log import AuditLog, AuditAction
+    from src.shared.infrastructure.security.audit_log import AuditLog, AuditAction
     
     # Audit log
     AuditLog.record(

@@ -1,8 +1,8 @@
 """Camera entity."""
 from uuid import UUID
-from src.shared_kernel.domain.entity import Entity
-from src.cidades.domain.value_objects.url_camera import URLCamera
-from src.cidades.domain.value_objects.status_camera import StatusCamera
+from src.shared.domain.entity import Entity
+from src.modules.cidades.domain.value_objects.url_camera import URLCamera
+from src.modules.cidades.domain.value_objects.status_camera import StatusCamera
 
 
 class Camera(Entity):

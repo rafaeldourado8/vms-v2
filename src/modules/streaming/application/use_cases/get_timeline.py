@@ -1,13 +1,13 @@
 """Get timeline use case."""
 from uuid import UUID, uuid4
 from datetime import datetime
-from src.shared_kernel.application.use_case import UseCase
+from src.shared.application.use_case import UseCase
 from src.streaming.application.dtos.get_timeline_dto import GetTimelineDTO
 from src.streaming.application.dtos.timeline_response_dto import TimelineResponseDTO
 from src.streaming.domain.entities.timeline import Timeline
 from src.streaming.domain.value_objects.timeline_segment import TimelineSegment
 from src.streaming.domain.repositories.recording_repository import RecordingRepository
-from src.shared_kernel.domain.domain_exception import DomainException
+from src.shared.domain.domain_exception import DomainException
 
 
 class GetTimelineUseCase(UseCase[GetTimelineDTO, TimelineResponseDTO]):
